@@ -185,7 +185,6 @@ const remaining =
 TOTAL_SUPPLY - minted
 
 res.send(`
-
 <html>
 
 <head>
