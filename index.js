@@ -194,24 +194,29 @@ res.send(`
 <style>
 
 body{
-background:#020617;
+background:url("https://raw.githubusercontent.com/Agungeth/XDOG-/main/logo.png");
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
 font-family:Arial;
 color:white;
 margin:0;
-padding:40px;
+padding:30px;
 }
-
-.container{
-max-width:700px;
-margin:auto;
-}
-
 .card{
-background:#111827;
+background:rgba(0,0,0,0.75);
+backdrop-filter:blur(10px);
 padding:40px;
-border-radius:20px;
+border-radius:25px;
+width:90%;
+max-width:1000px;
 text-align:center;
-box-shadow:0 0 20px #000;
+box-shadow:0 0 40px #00ff99;
+border:1px solid #00ff99;
 }
 
 .logo{
