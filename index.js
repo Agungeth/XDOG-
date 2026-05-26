@@ -170,6 +170,11 @@ return false
 
 }
 
+==================================
+WEBSITE
+==================================
+/*
+
 /*
 ==================================
 WEBSITE
@@ -185,6 +190,7 @@ const remaining =
 TOTAL_SUPPLY - minted
 
 res.send(`
+
 <html>
 
 <head>
@@ -202,163 +208,33 @@ padding:20px;
 background:#050816;
 font-family:Arial;
 color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
-background-image:url('https://raw.githubusercontent.com/Agungeth/XDOG-/main/logo.png');
+background-image:url("https://raw.githubusercontent.com/Agungeth/XDOG-/main/logo.png");
 background-size:cover;
 background-position:center;
 background-attachment:fixed;
 }
 
-.container{
+.overlay{
+position:fixed;
+top:0;
+left:0;
 width:100%;
-max-width:430px;
-background:rgba(5,8,22,0.88);
+height:100%;
+background:rgba(0,0,0,0.75);
+backdrop-filter:blur(6px);
+z-index:0;
+}
+
+.container{
+position:relative;
+z-index:1;
+max-width:420px;
+margin:auto;
 border:1px solid #1f2937;
+background:#0b1020ee;
 padding:25px;
 border-radius:20px;
-backdrop-filter:blur(10px);
-box-shadow:0 0 30px rgba(0,255,153,0.2);
-}
-
-.topstats{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-margin-bottom:20px;
-}
-
-.stat{
-background:#0b1020;
-border:1px solid #1f2937;
-padding:20px;
-text-align:center;
-}
-
-.number1{
-font-size:34px;
-color:#ff4d4d;
-font-weight:bold;
-}
-
-.number2{
-font-size:34px;
-color:#ffd54f;
-font-weight:bold;
-}
-
-.label{
-margin-top:10px;
-font-size:12px;
-color:#9ca3af;
-letter-spacing:2px;
-}
-
-.progress-title{
-display:flex;
-justify-content:space-between;
-margin-top:20px;
-margin-bottom:10px;
-font-size:13px;
-color:#9ca3af;
-}
-
-.progress{
-width:100%;
-height:10px;
-background:#111827;
-overflow:hidden;
-}
-
-.progress-bar{
-width:${progress}%;
-height:100%;
-background:linear-gradient(
-90deg,
-#ff004c,
-#ff9900,
-#ffe600
-);
-}
-
-.card{
-margin-top:25px;
-background:#0b1020;
-border:1px solid #1f2937;
-padding:20px;
-}
-
-.pricebox{
-border:1px solid #665c2c;
-padding:20px;
-margin-top:15px;
-margin-bottom:20px;
-text-align:center;
-}
-
-.price{
-font-size:42px;
-color:#ffd54f;
-letter-spacing:3px;
-}
-
-.mintbox{
-display:grid;
-grid-template-columns:1fr 1fr 1fr;
-margin-top:15px;
-margin-bottom:20px;
-}
-
-.mbtn{
-background:#111827;
-padding:18px;
-text-align:center;
-border:1px solid #1f2937;
-font-size:28px;
-}
-
-.total{
-display:flex;
-justify-content:space-between;
-margin-top:20px;
-margin-bottom:25px;
-color:#9ca3af;
-}
-
-.connect{
-width:100%;
-padding:18px;
-background:transparent;
-border:1px solid #1f2937;
-color:white;
-font-size:18px;
-letter-spacing:3px;
-cursor:pointer;
-}
-
-.connect:hover{
-background:#00ff99;
-color:black;
-}
-
-.details{
-margin-top:30px;
-border-top:1px solid #1f2937;
-padding-top:25px;
-}
-
-.row{
-display:flex;
-justify-content:space-between;
-margin-bottom:18px;
-color:#9ca3af;
-}
-
-.live{
-color:#00ff99;
-font-weight:bold;
+box-shadow:0 0 20px #000;
 }
 
 .logo{
@@ -367,40 +243,120 @@ height:90px;
 border-radius:50%;
 display:block;
 margin:auto;
-margin-bottom:20px;
-box-shadow:0 0 25px #00ff99;
+box-shadow:0 0 20px #00ff99;
 }
 
 .title{
 text-align:center;
-font-size:34px;
+font-size:38px;
 font-weight:bold;
+margin-top:15px;
 }
 
 .subtitle{
 text-align:center;
 color:#9ca3af;
+font-size:12px;
+margin-bottom:30px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+margin-bottom:20px;
+}
+
+.box{
+border:1px solid #1f2937;
+padding:15px;
+border-radius:12px;
+text-align:center;
+background:#0f172a;
+}
+
+.big{
+font-size:30px;
+font-weight:bold;
+color:#00ff99;
+}
+
+.label{
+font-size:11px;
+color:#9ca3af;
+margin-top:5px;
+}
+
+.progress{
+width:100%;
+height:10px;
+background:#111827;
+border-radius:20px;
+overflow:hidden;
 margin-top:10px;
 margin-bottom:25px;
-letter-spacing:2px;
-font-size:12px;
 }
 
-.roadmap{
-margin-top:30px;
+.bar{
+height:100%;
+width:${progress}%;
+background:linear-gradient(
+90deg,
+#ff0033,
+#00ff99
+);
 }
 
-.rtitle{
+.mintbox{
+border:1px solid #1f2937;
+padding:20px;
+border-radius:15px;
+background:#0f172a;
 margin-bottom:20px;
-color:#ff4d4d;
-letter-spacing:3px;
+}
+
+.price{
+font-size:35px;
+text-align:center;
+color:#ffd166;
+margin:20px 0;
+}
+
+button{
+width:100%;
+padding:18px;
+border:none;
+border-radius:12px;
+background:#00ff99;
+color:black;
+font-size:20px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.section{
+margin-top:25px;
+}
+
+.section h2{
+font-size:15px;
+color:#ff3355;
+margin-bottom:10px;
 }
 
 .rbox{
-background:#111827;
-border:1px solid #1f2937;
-padding:15px;
-margin-bottom:12px;
+border-bottom:1px solid #1f2937;
+padding:12px 0;
+color:#d1d5db;
+}
+
+.live{
+background:#052e16;
+color:#22c55e;
+padding:5px 12px;
+border-radius:10px;
+font-size:12px;
+display:inline-block;
 }
 
 </style>
@@ -408,6 +364,8 @@ margin-bottom:12px;
 </head>
 
 <body>
+
+<div class="overlay"></div>
 
 <div class="container">
 
@@ -421,13 +379,13 @@ XDOG
 </div>
 
 <div class="subtitle">
-XRPL MEME INSCRIPTION
+FIRST XRPL MEME INSCRIPTION
 </div>
 
-<div class="topstats">
+<div class="grid">
 
-<div class="stat">
-<div class="number1">
+<div class="box">
+<div class="big">
 ${minted}
 </div>
 <div class="label">
@@ -435,8 +393,8 @@ MINTED
 </div>
 </div>
 
-<div class="stat">
-<div class="number2">
+<div class="box">
+<div class="big">
 ${remaining}
 </div>
 <div class="label">
@@ -446,31 +404,17 @@ REMAINING
 
 </div>
 
-<div class="progress-title">
-<span>MINT PROGRESS</span>
-<span>${progress}%</span>
+<div class="label">
+MINT PROGRESS ${progress}%
 </div>
 
 <div class="progress">
-<div class="progress-bar"></div>
+<div class="bar"></div>
 </div>
 
-<div class="card">
+<div class="mintbox">
 
-<div style="
-color:#ff4d4d;
-letter-spacing:3px;
-margin-bottom:15px;
-">
-PAID MINT
-</div>
-
-<div class="pricebox">
-
-<div style="
-color:#9ca3af;
-margin-bottom:10px;
-">
+<div class="label">
 PRICE PER MINT
 </div>
 
@@ -478,95 +422,67 @@ PRICE PER MINT
 0.5 XRP
 </div>
 
-</div>
-
-<div class="mintbox">
-
-<div class="mbtn">-</div>
-
-<div class="mbtn">1</div>
-
-<div class="mbtn">+</div>
-
-</div>
-
-<div class="total">
-
-<span>TOTAL</span>
-
-<span style="
-color:#ffd54f;
-font-size:28px;
-">
-0.5 XRP
-</span>
-
-</div>
-
 <a href="/mint">
 
-<button class="connect">
-CONNECT XAMAN
+<button>
+MINT XDOG
 </button>
 
 </a>
 
 </div>
 
-<div class="details">
+<div class="section">
 
-<div class="row">
-<span>MINT STATUS</span>
+<h2>DETAILS</h2>
+
+<div class="rbox">
+Mint Status
 <span class="live">
-● LIVE
+LIVE
 </span>
 </div>
 
-<div class="row">
-<span>PRICE</span>
-<span>0.5 XRP</span>
-</div>
-
-<div class="row">
-<span>MAX / TX</span>
-<span>1000 XDOG</span>
-</div>
-
-<div class="row">
-<span>TOTAL SUPPLY</span>
-<span>21,000,000</span>
-</div>
-
-</div>
-
-<div class="roadmap">
-
-<div class="rtitle">
-ROADMAP
+<div class="rbox">
+Supply: 21,000,000
 </div>
 
 <div class="rbox">
-✅ WEBSITE LAUNCH
+Per Mint: 1000 XDOG
 </div>
 
 <div class="rbox">
-✅ XRPL MINT SYSTEM
+Wallet: Xaman
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>ROADMAP</h2>
+
+<div class="rbox">
+✅ Website Launch
 </div>
 
 <div class="rbox">
-✅ AUTO DELIVERY
+✅ XRPL Mint System
 </div>
 
 <div class="rbox">
-🔜 MARKETPLACE
+✅ Auto Inscription
 </div>
 
 <div class="rbox">
-🔜 AIRDROP
+🔜 Marketplace
 </div>
 
 <div class="rbox">
-🔜 CEX LISTING
+🔜 Community Airdrop
+</div>
+
+<div class="rbox">
+🔜 CEX Listing
 </div>
 
 </div>
@@ -580,6 +496,7 @@ ROADMAP
 `)
 
 })
+
 
 /*
 ==================================
