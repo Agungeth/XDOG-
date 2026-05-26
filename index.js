@@ -175,6 +175,11 @@ return false
 WEBSITE
 ==================================
 */
+/*
+==================================
+WEBSITE
+==================================
+*/
 
 app.get("/", (req, res) => {
 
@@ -190,22 +195,30 @@ res.send(`
 
 body{
 background:#020617;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
 font-family:Arial;
 color:white;
 margin:0;
+padding:40px;
+}
+
+.container{
+max-width:700px;
+margin:auto;
 }
 
 .card{
 background:#111827;
 padding:40px;
 border-radius:20px;
-width:340px;
 text-align:center;
 box-shadow:0 0 20px #000;
+}
+
+.logo{
+width:120px;
+border-radius:50%;
+margin-bottom:20px;
+box-shadow:0 0 20px #00ff99;
 }
 
 button{
@@ -217,10 +230,22 @@ background:#00ff99;
 font-size:20px;
 font-weight:bold;
 cursor:pointer;
+margin-top:20px;
+}
+
+h2{
+margin-top:40px;
+color:#00ff99;
 }
 
 p{
 color:#9ca3af;
+line-height:1.7;
+}
+
+hr{
+border:1px solid #1f2937;
+margin:30px 0;
 }
 
 </style>
@@ -229,11 +254,24 @@ color:#9ca3af;
 
 <body>
 
+<div class="container">
+
 <div class="card">
+
+<img
+class="logo"
+src="https://raw.githubusercontent.com/Agungeth/XDOG-/main/logo.png"
+>
 
 <h1>XDOG</h1>
 
-<p>XRP Ledger Inscription</p>
+<p>
+FIRST XRPL MEME INSCRIPTION
+</p>
+
+<hr>
+
+<h2>TOKENOMICS</h2>
 
 <p>Total Supply: 21,000,000</p>
 
@@ -243,13 +281,68 @@ color:#9ca3af;
 
 <p>Minted: ${minted}</p>
 
+<hr>
+
+<h2>ABOUT</h2>
+
+<p>
+XDOG is an XRP Ledger inscription
+project powered by XRPL and Xaman.
+Built for collectors, degens,
+and the XRP community.
+</p>
+
+<hr>
+
+<h2>ROADMAP</h2>
+
+<p>✅ Website Launch</p>
+
+<p>✅ XRPL Mint System</p>
+
+<p>✅ Auto Inscription Delivery</p>
+
+<p>🔜 Marketplace</p>
+
+<p>🔜 Community Airdrop</p>
+
+<p>🔜 CEX Listing</p>
+
+<hr>
+
+<h2>FAQ</h2>
+
+<p><b>Q:</b> What is XDOG?</p>
+
+<p><b>A:</b> XDOG is a meme inscription on XRPL.</p>
+
+<p><b>Q:</b> How many per mint?</p>
+
+<p><b>A:</b> 1000 XDOG per mint.</p>
+
+<p><b>Q:</b> Wallet support?</p>
+
+<p><b>A:</b> Xaman Wallet.</p>
+
 <a href="/mint">
 
 <button>
+
 MINT XDOG
+
 </button>
 
 </a>
+
+<br><br>
+
+<p style="font-size:12px;">
+
+Powered by XRPL • XAMAN • RAILWAY
+
+</p>
+
+</div>
 
 </div>
 
