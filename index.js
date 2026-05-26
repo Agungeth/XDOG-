@@ -43,10 +43,10 @@ XRPL CLIENT
 ==================================
 */
 
+
 const client =
 new xrpl.Client(
-"wss://xrplcluster.com"
-)
+"wss://xrplcluster.com/"
 
 async function connectXRPL(){
 
