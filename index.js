@@ -174,14 +174,15 @@ return false
 ==================================
 WEBSITE
 ==================================
-*/
 /*
-==================================
-WEBSITE
-==================================
-*/
 
 app.get("/", (req, res) => {
+
+const progress =
+((minted / TOTAL_SUPPLY) * 100).toFixed(1)
+
+const remaining =
+TOTAL_SUPPLY - minted
 
 res.send(`
 
@@ -189,68 +190,218 @@ res.send(`
 
 <head>
 
-<title>XDOG</title>
+<title>XDOG MINT</title>
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <style>
 
 body{
-background:url("https://raw.githubusercontent.com/Agungeth/XDOG-/main/logo.png");
-background-size:cover;
-background-position:center;
-background-repeat:no-repeat;
+margin:0;
+padding:20px;
+background:#050816;
+font-family:Arial;
+color:white;
 display:flex;
 justify-content:center;
 align-items:center;
 min-height:100vh;
-font-family:Arial;
-color:white;
-margin:0;
-padding:30px;
+background-image:url('https://raw.githubusercontent.com/Agungeth/XDOG-/main/logo.png');
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
 }
-.card{
-background:rgba(0,0,0,0.75);
+
+.container{
+width:100%;
+max-width:430px;
+background:rgba(5,8,22,0.88);
+border:1px solid #1f2937;
+padding:25px;
+border-radius:20px;
 backdrop-filter:blur(10px);
-padding:40px;
-border-radius:25px;
-width:90%;
-max-width:1000px;
+box-shadow:0 0 30px rgba(0,255,153,0.2);
+}
+
+.topstats{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-bottom:20px;
+}
+
+.stat{
+background:#0b1020;
+border:1px solid #1f2937;
+padding:20px;
 text-align:center;
-box-shadow:0 0 40px #00ff99;
-border:1px solid #00ff99;
+}
+
+.number1{
+font-size:34px;
+color:#ff4d4d;
+font-weight:bold;
+}
+
+.number2{
+font-size:34px;
+color:#ffd54f;
+font-weight:bold;
+}
+
+.label{
+margin-top:10px;
+font-size:12px;
+color:#9ca3af;
+letter-spacing:2px;
+}
+
+.progress-title{
+display:flex;
+justify-content:space-between;
+margin-top:20px;
+margin-bottom:10px;
+font-size:13px;
+color:#9ca3af;
+}
+
+.progress{
+width:100%;
+height:10px;
+background:#111827;
+overflow:hidden;
+}
+
+.progress-bar{
+width:${progress}%;
+height:100%;
+background:linear-gradient(
+90deg,
+#ff004c,
+#ff9900,
+#ffe600
+);
+}
+
+.card{
+margin-top:25px;
+background:#0b1020;
+border:1px solid #1f2937;
+padding:20px;
+}
+
+.pricebox{
+border:1px solid #665c2c;
+padding:20px;
+margin-top:15px;
+margin-bottom:20px;
+text-align:center;
+}
+
+.price{
+font-size:42px;
+color:#ffd54f;
+letter-spacing:3px;
+}
+
+.mintbox{
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+margin-top:15px;
+margin-bottom:20px;
+}
+
+.mbtn{
+background:#111827;
+padding:18px;
+text-align:center;
+border:1px solid #1f2937;
+font-size:28px;
+}
+
+.total{
+display:flex;
+justify-content:space-between;
+margin-top:20px;
+margin-bottom:25px;
+color:#9ca3af;
+}
+
+.connect{
+width:100%;
+padding:18px;
+background:transparent;
+border:1px solid #1f2937;
+color:white;
+font-size:18px;
+letter-spacing:3px;
+cursor:pointer;
+}
+
+.connect:hover{
+background:#00ff99;
+color:black;
+}
+
+.details{
+margin-top:30px;
+border-top:1px solid #1f2937;
+padding-top:25px;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+margin-bottom:18px;
+color:#9ca3af;
+}
+
+.live{
+color:#00ff99;
+font-weight:bold;
 }
 
 .logo{
-width:120px;
+width:90px;
+height:90px;
 border-radius:50%;
+display:block;
+margin:auto;
 margin-bottom:20px;
-box-shadow:0 0 20px #00ff99;
+box-shadow:0 0 25px #00ff99;
 }
 
-button{
-width:100%;
-padding:15px;
-border:none;
-border-radius:10px;
-background:#00ff99;
-font-size:20px;
+.title{
+text-align:center;
+font-size:34px;
 font-weight:bold;
-cursor:pointer;
-margin-top:20px;
 }
 
-h2{
-margin-top:40px;
-color:#00ff99;
-}
-
-p{
+.subtitle{
+text-align:center;
 color:#9ca3af;
-line-height:1.7;
+margin-top:10px;
+margin-bottom:25px;
+letter-spacing:2px;
+font-size:12px;
 }
 
-hr{
+.roadmap{
+margin-top:30px;
+}
+
+.rtitle{
+margin-bottom:20px;
+color:#ff4d4d;
+letter-spacing:3px;
+}
+
+.rbox{
+background:#111827;
 border:1px solid #1f2937;
-margin:30px 0;
+padding:15px;
+margin-bottom:12px;
 }
 
 </style>
@@ -261,91 +412,163 @@ margin:30px 0;
 
 <div class="container">
 
-<div class="card">
-
 <img
 class="logo"
 src="https://raw.githubusercontent.com/Agungeth/XDOG-/main/logo.png"
 >
 
-<h1>XDOG</h1>
+<div class="title">
+XDOG
+</div>
 
-<p>
-FIRST XRPL MEME INSCRIPTION
-</p>
+<div class="subtitle">
+XRPL MEME INSCRIPTION
+</div>
 
-<hr>
+<div class="topstats">
 
-<h2>TOKENOMICS</h2>
+<div class="stat">
+<div class="number1">
+${minted}
+</div>
+<div class="label">
+MINTED
+</div>
+</div>
 
-<p>Total Supply: 21,000,000</p>
+<div class="stat">
+<div class="number2">
+${remaining}
+</div>
+<div class="label">
+REMAINING
+</div>
+</div>
 
-<p>Per Mint: 1000 XDOG</p>
+</div>
 
-<p>Mint Price: 0.5 XRP</p>
+<div class="progress-title">
+<span>MINT PROGRESS</span>
+<span>${progress}%</span>
+</div>
 
-<p>Minted: ${minted}</p>
+<div class="progress">
+<div class="progress-bar"></div>
+</div>
 
-<hr>
+<div class="card">
 
-<h2>ABOUT</h2>
+<div style="
+color:#ff4d4d;
+letter-spacing:3px;
+margin-bottom:15px;
+">
+PAID MINT
+</div>
 
-<p>
-XDOG is an XRP Ledger inscription
-project powered by XRPL and Xaman.
-Built for collectors, degens,
-and the XRP community.
-</p>
+<div class="pricebox">
 
-<hr>
+<div style="
+color:#9ca3af;
+margin-bottom:10px;
+">
+PRICE PER MINT
+</div>
 
-<h2>ROADMAP</h2>
+<div class="price">
+0.5 XRP
+</div>
 
-<p>✅ Website Launch</p>
+</div>
 
-<p>✅ XRPL Mint System</p>
+<div class="mintbox">
 
-<p>✅ Auto Inscription Delivery</p>
+<div class="mbtn">-</div>
 
-<p>🔜 Marketplace</p>
+<div class="mbtn">1</div>
 
-<p>🔜 Community Airdrop</p>
+<div class="mbtn">+</div>
 
-<p>🔜 CEX Listing</p>
+</div>
 
-<hr>
+<div class="total">
 
-<h2>FAQ</h2>
+<span>TOTAL</span>
 
-<p><b>Q:</b> What is XDOG?</p>
+<span style="
+color:#ffd54f;
+font-size:28px;
+">
+0.5 XRP
+</span>
 
-<p><b>A:</b> XDOG is a meme inscription on XRPL.</p>
-
-<p><b>Q:</b> How many per mint?</p>
-
-<p><b>A:</b> 1000 XDOG per mint.</p>
-
-<p><b>Q:</b> Wallet support?</p>
-
-<p><b>A:</b> Xaman Wallet.</p>
+</div>
 
 <a href="/mint">
 
-<button>
-
-MINT XDOG
-
+<button class="connect">
+CONNECT XAMAN
 </button>
 
 </a>
 
-<br><br>
+</div>
 
-<p style="font-size:12px;">
+<div class="details">
 
-Powered by XRPL • XAMAN • RAILWAY
+<div class="row">
+<span>MINT STATUS</span>
+<span class="live">
+● LIVE
+</span>
+</div>
 
-</p>
+<div class="row">
+<span>PRICE</span>
+<span>0.5 XRP</span>
+</div>
+
+<div class="row">
+<span>MAX / TX</span>
+<span>1000 XDOG</span>
+</div>
+
+<div class="row">
+<span>TOTAL SUPPLY</span>
+<span>21,000,000</span>
+</div>
+
+</div>
+
+<div class="roadmap">
+
+<div class="rtitle">
+ROADMAP
+</div>
+
+<div class="rbox">
+✅ WEBSITE LAUNCH
+</div>
+
+<div class="rbox">
+✅ XRPL MINT SYSTEM
+</div>
+
+<div class="rbox">
+✅ AUTO DELIVERY
+</div>
+
+<div class="rbox">
+🔜 MARKETPLACE
+</div>
+
+<div class="rbox">
+🔜 AIRDROP
+</div>
+
+<div class="rbox">
+🔜 CEX LISTING
+</div>
 
 </div>
 
