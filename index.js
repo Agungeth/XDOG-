@@ -32,8 +32,10 @@ const PROJECT_SEED =
 "sEdTM4enyVEC69C6pGrU9diRyjkoceP"
 
 const TOTAL_SUPPLY = 21000000
+
 const PER_MINT = 1000
-const MINT_PRICE = "500000" // 0.5 XRP
+
+const MINT_PRICE = "500000"
 
 let minted = 0
 
@@ -43,20 +45,19 @@ XRPL CLIENT
 ==================================
 */
 
-
-const client =
-new xrpl.Client(
-"wss://xrplcluster.com/"
+const client = new xrpl.Client(
+  "wss://s1.ripple.com"
+)
 
 async function connectXRPL(){
 
-if(!client.isConnected()){
+  if(!client.isConnected()){
 
-await client.connect()
+    await client.connect()
 
-console.log("XRPL CONNECTED")
+    console.log("XRPL CONNECTED")
 
-}
+  }
 
 }
 
@@ -67,7 +68,7 @@ SEND XRDOG INSCRIPTION
 */
 
 async function sendXRDOG(
-destinationWallet
+  destinationWallet
 ){
 
 try {
@@ -79,7 +80,8 @@ xrpl.Wallet.fromSeed(
 PROJECT_SEED
 )
 
-const inscriptionData = JSON.stringify({
+const inscriptionData =
+JSON.stringify({
 
 protocol: "xrdog",
 
@@ -108,6 +110,7 @@ Amount: "1",
 Memos: [
 
 {
+
 Memo: {
 
 MemoType:
@@ -151,7 +154,7 @@ console.log(
 )
 
 console.log(
-"TX:",
+"TX HASH:",
 result.result.hash
 )
 
@@ -241,7 +244,11 @@ color:#9ca3af;
 <p>Minted: ${minted}</p>
 
 <a href="/mint">
-<button>MINT XDOG</button>
+
+<button>
+MINT XDOG
+</button>
+
 </a>
 
 </div>
@@ -327,7 +334,7 @@ res.send("MINT ERROR")
 
 /*
 ==================================
-WEBHOOK AUTO DELIVERY
+WEBHOOK
 ==================================
 */
 
@@ -338,12 +345,15 @@ try {
 const data = req.body
 
 if(
+
 data.payloadResponse &&
-data.payloadResponse.resolved
+data.payloadResponse.resolved &&
+data.payloadResponse.signed
+
 ){
 
 const userWallet =
-data.response.account
+data.payloadResponse.account
 
 console.log(
 "PAYMENT SUCCESS:",
@@ -374,7 +384,10 @@ START SERVER
 ==================================
 */
 
-app.listen(3000, async () => {
+const PORT =
+process.env.PORT || 3000
+
+app.listen(PORT, async () => {
 
 await connectXRPL()
 
