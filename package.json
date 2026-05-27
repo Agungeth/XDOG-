@@ -14,6 +14,8 @@
     "axios": "^1.16.1",
     "body-parser": "^2.2.2",
     "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "mongodb": "^7.2.0",
     "xrpl": "^4.6.0"
   }
 }

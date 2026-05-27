@@ -1,43 +1,106 @@
+/*
+==================================
+XDOG FULL XRPL LAUNCHPAD
+==================================
+*/
+
 const express = require("express")
 const axios = require("axios")
 const xrpl = require("xrpl")
 const bodyParser = require("body-parser")
+const { MongoClient, ObjectId } = require("mongodb")
+const session = require("express-session")
 
 const app = express()
 
 app.use(bodyParser.json())
 
+app.use(express.urlencoded({
+extended:true
+}))
+
+app.use(session({
+secret:"xdog-secret",
+resave:false,
+saveUninitialized:true
+}))
+
 /*
 ==================================
-XAMAN API
+CONFIG
 ==================================
 */
 
 const API_KEY =
 "a2f246fc-0098-454b-a5c7-282df3df9127"
 
+
 const API_SECRET =
 "3a33d17b-0795-411d-aaf9-cee96308dec4"
 
-/*
-==================================
-PROJECT CONFIG
-==================================
-*/
 
 const PROJECT_WALLET =
 "ra5YfjZMr3WtjGFJrDBQoxAtw3J1dBCMdj"
 
+
 const PROJECT_SEED =
 "sEdTM4enyVEC69C6pGrU9diRyjkoceP"
 
+
+const MONGO_URI =
+"mongodb+srv://admin:admin123@cluster0.wm6mfrb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+
+const ADMIN_WALLET =
+"ra5YfjZMr3WtjGFJrDBQoxAtw3J1dBCMdj"
+
+/*
+==================================
+FEES
+==================================
+*/
+
+const DEPLOY_FEE = 5
+const MARKETPLACE_FEE = 5
+const MINT_FEE = 1
+
+/*
+==================================
+XDOG CONFIG
+==================================
+*/
+
 const TOTAL_SUPPLY = 21000000
-
 const PER_MINT = 1000
-
 const MINT_PRICE = "500000"
 
 let minted = 0
+
+/*
+==================================
+DATABASE
+==================================
+*/
+
+const mongo =
+new MongoClient(MONGO_URI)
+
+let db
+
+async function connectDB(){
+
+if(!db){
+
+await mongo.connect()
+
+db = mongo.db("xdog")
+
+console.log(
+"DATABASE CONNECTED"
+)
+
+}
+
+}
 
 /*
 ==================================
@@ -45,30 +108,36 @@ XRPL CLIENT
 ==================================
 */
 
-const client = new xrpl.Client(
-  "wss://s1.ripple.com"
+const client =
+new xrpl.Client(
+"wss://s1.ripple.com"
 )
 
 async function connectXRPL(){
 
-  if(!client.isConnected()){
+if(!client.isConnected()){
 
-    await client.connect()
+await client.connect()
 
-    console.log("XRPL CONNECTED")
+console.log(
+"XRPL CONNECTED"
+)
 
-  }
+}
 
 }
 
 /*
 ==================================
-SEND XRDOG INSCRIPTION
+SEND INSCRIPTION
 ==================================
 */
 
-async function sendXRDOG(
-  destinationWallet
+async function sendInscription(
+destinationWallet,
+ticker,
+mintAmount,
+supply
 ){
 
 try {
@@ -83,35 +152,35 @@ PROJECT_SEED
 const inscriptionData =
 JSON.stringify({
 
-protocol: "xrdog",
+protocol:"xrdog",
 
-op: "mint",
+op:"mint",
 
-tick: "XDOG",
+tick:ticker,
 
-amount: PER_MINT,
+amount:mintAmount,
 
-supply: TOTAL_SUPPLY,
+supply:supply,
 
-minted: minted + PER_MINT
+minted:minted + mintAmount
 
 })
 
 const tx = {
 
-TransactionType: "Payment",
+TransactionType:"Payment",
 
-Account: wallet.address,
+Account:wallet.address,
 
-Destination: destinationWallet,
+Destination:destinationWallet,
 
-Amount: "1",
+Amount:"1",
 
-Memos: [
+Memos:[
 
 {
 
-Memo: {
+Memo:{
 
 MemoType:
 Buffer
@@ -147,14 +216,13 @@ await client.submitAndWait(
 signed.tx_blob
 )
 
-minted += PER_MINT
+minted += mintAmount
 
 console.log(
-"XRDOG INSCRIPTION SENT"
+"INSCRIPTION SENT"
 )
 
 console.log(
-"TX HASH:",
 result.result.hash
 )
 
@@ -172,14 +240,34 @@ return false
 
 /*
 ==================================
-WEBSITE
+HOMEPAGE
 ==================================
 */
 
-app.get("/", (req, res) => {
+app.get("/", async (req,res)=>{
+
+await connectDB()
+
+const listings =
+await db.collection("listings")
+.find()
+.toArray()
+
+let floor = 0
+
+if(listings.length > 0){
+
+floor = Math.min(
+...listings.map(x =>
+parseFloat(x.price)
+)
+)
+
+}
 
 const progress =
-((minted / TOTAL_SUPPLY) * 100).toFixed(1)
+((minted / TOTAL_SUPPLY) * 100)
+.toFixed(1)
 
 const remaining =
 TOTAL_SUPPLY - minted
@@ -190,7 +278,7 @@ res.send(`
 
 <head>
 
-<title>XDOG MINT</title>
+<title>XDOG</title>
 
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
@@ -203,118 +291,14 @@ padding:20px;
 background:#050816;
 font-family:Arial;
 color:white;
-background-image:url("https://raw.githubusercontent.com/Agungeth/XDOG-/main/logo.png");
-background-size:cover;
-background-position:center;
-background-attachment:fixed;
-}
-
-.overlay{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.75);
-backdrop-filter:blur(6px);
-z-index:0;
 }
 
 .container{
-position:relative;
-z-index:1;
-max-width:420px;
+max-width:500px;
 margin:auto;
-border:1px solid #1f2937;
-background:#0b1020ee;
+background:#0f172a;
 padding:25px;
 border-radius:20px;
-box-shadow:0 0 20px #000;
-}
-
-.logo{
-width:90px;
-height:90px;
-border-radius:50%;
-display:block;
-margin:auto;
-box-shadow:0 0 20px #00ff99;
-}
-
-.title{
-text-align:center;
-font-size:38px;
-font-weight:bold;
-margin-top:15px;
-}
-
-.subtitle{
-text-align:center;
-color:#9ca3af;
-font-size:12px;
-margin-bottom:30px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
-margin-bottom:20px;
-}
-
-.box{
-border:1px solid #1f2937;
-padding:15px;
-border-radius:12px;
-text-align:center;
-background:#0f172a;
-}
-
-.big{
-font-size:30px;
-font-weight:bold;
-color:#00ff99;
-}
-
-.label{
-font-size:11px;
-color:#9ca3af;
-margin-top:5px;
-}
-
-.progress{
-width:100%;
-height:10px;
-background:#111827;
-border-radius:20px;
-overflow:hidden;
-margin-top:10px;
-margin-bottom:25px;
-}
-
-.bar{
-height:100%;
-width:${progress}%;
-background:linear-gradient(
-90deg,
-#ff0033,
-#00ff99
-);
-}
-
-.mintbox{
-border:1px solid #1f2937;
-padding:20px;
-border-radius:15px;
-background:#0f172a;
-margin-bottom:20px;
-}
-
-.price{
-font-size:35px;
-text-align:center;
-color:#ffd166;
-margin:20px 0;
 }
 
 button{
@@ -323,35 +307,17 @@ padding:18px;
 border:none;
 border-radius:12px;
 background:#00ff99;
-color:black;
-font-size:20px;
+font-size:18px;
 font-weight:bold;
 cursor:pointer;
+margin-top:15px;
 }
 
-.section{
-margin-top:25px;
-}
-
-.section h2{
-font-size:15px;
-color:#ff3355;
-margin-bottom:10px;
-}
-
-.rbox{
-border-bottom:1px solid #1f2937;
-padding:12px 0;
-color:#d1d5db;
-}
-
-.live{
-background:#052e16;
-color:#22c55e;
-padding:5px 12px;
-border-radius:10px;
-font-size:12px;
-display:inline-block;
+.box{
+background:#111827;
+padding:15px;
+border-radius:12px;
+margin-bottom:15px;
 }
 
 </style>
@@ -360,127 +326,59 @@ display:inline-block;
 
 <body>
 
-<div class="overlay"></div>
-
 <div class="container">
 
-<img
-class="logo"
-src="https://raw.githubusercontent.com/Agungeth/XDOG-/main/logo.png"
->
-
-<div class="title">
+<h1>
 XDOG
-</div>
+</h1>
 
-<div class="subtitle">
-FIRST XRPL MEME INSCRIPTION
-</div>
-
-<div class="grid">
+<p>
+FIRST XRPL INSCRIPTION LAUNCHPAD
+</p>
 
 <div class="box">
-<div class="big">
+Minted:
 ${minted}
 </div>
-<div class="label">
-MINTED
-</div>
+
+<div class="box">
+Remaining:
+${remaining}
 </div>
 
 <div class="box">
-<div class="big">
-${remaining}
-</div>
-<div class="label">
-REMAINING
-</div>
+Floor:
+${floor} XRP
 </div>
 
-</div>
-
-<div class="label">
-MINT PROGRESS ${progress}%
-</div>
-
-<div class="progress">
-<div class="bar"></div>
-</div>
-
-<div class="mintbox">
-
-<div class="label">
-PRICE PER MINT
-</div>
-
-<div class="price">
-0.5 XRP
+<div class="box">
+Progress:
+${progress}%
 </div>
 
 <a href="/mint">
-
 <button>
 MINT XDOG
 </button>
-
 </a>
 
-</div>
+<a href="/market">
+<button>
+MARKETPLACE
+</button>
+</a>
 
-<div class="section">
+<a href="/deploy">
+<button>
+DEPLOY TOKEN
+</button>
+</a>
 
-<h2>DETAILS</h2>
-
-<div class="rbox">
-Mint Status
-<span class="live">
-LIVE
-</span>
-</div>
-
-<div class="rbox">
-Supply: 21,000,000
-</div>
-
-<div class="rbox">
-Per Mint: 1000 XDOG
-</div>
-
-<div class="rbox">
-Wallet: Xaman
-</div>
-
-</div>
-
-<div class="section">
-
-<h2>ROADMAP</h2>
-
-<div class="rbox">
-✅ Website Launch
-</div>
-
-<div class="rbox">
-✅ XRPL Mint System
-</div>
-
-<div class="rbox">
-✅ Auto Inscription
-</div>
-
-<div class="rbox">
-🔜 Marketplace
-</div>
-
-<div class="rbox">
-🔜 Community Airdrop
-</div>
-
-<div class="rbox">
-🔜 CEX Listing
-</div>
-
-</div>
+<a href="/admin">
+<button>
+ADMIN PANEL
+</button>
+</a>
 
 </div>
 
@@ -492,24 +390,15 @@ Wallet: Xaman
 
 })
 
-
 /*
 ==================================
-MINT PAYMENT
+MINT XDOG
 ==================================
 */
 
-app.get("/mint", async (req, res) => {
+app.get("/mint", async (req,res)=>{
 
 try {
-
-if(minted >= TOTAL_SUPPLY){
-
-return res.send(
-"SUPPLY SOLD OUT"
-)
-
-}
 
 const payload =
 await axios.post(
@@ -518,22 +407,26 @@ await axios.post(
 
 {
 
-txjson: {
+txjson:{
 
-TransactionType: "Payment",
+TransactionType:"Payment",
 
 Destination:
 PROJECT_WALLET,
 
-Amount: MINT_PRICE
+Amount:MINT_PRICE
 
+},
+
+custom_meta:{
+identifier:"XDOG"
 }
 
 },
 
 {
 
-headers: {
+headers:{
 
 "x-api-key":
 API_KEY,
@@ -566,11 +459,569 @@ res.send("MINT ERROR")
 
 /*
 ==================================
+MARKETPLACE
+==================================
+*/
+
+app.get("/market", async (req,res)=>{
+
+await connectDB()
+
+const listings =
+await db.collection("listings")
+.find()
+.toArray()
+
+const html =
+listings.map(x=>`
+
+<div style="
+background:#111827;
+padding:20px;
+border-radius:20px;
+margin-bottom:20px;
+">
+
+<h2>
+${x.inscription}
+</h2>
+
+<p>
+${x.price} XRP
+</p>
+
+<form
+action="/buy/${x._id}"
+method="POST"
+>
+
+<button>
+BUY NOW
+</button>
+
+</form>
+
+</div>
+
+`).join("")
+
+res.send(`
+
+<html>
+
+<body style="
+background:#020617;
+font-family:Arial;
+color:white;
+padding:20px;
+">
+
+<h1>
+XDOG MARKETPLACE
+</h1>
+
+<form
+action="/list"
+method="POST"
+>
+
+<input
+name="seller"
+placeholder="Seller Wallet"
+required
+>
+
+<br><br>
+
+<input
+name="inscription"
+placeholder="Inscription"
+required
+>
+
+<br><br>
+
+<input
+name="price"
+placeholder="Price XRP"
+required
+>
+
+<br><br>
+
+<button>
+CREATE LISTING
+</button>
+
+</form>
+
+<br><hr><br>
+
+${html}
+
+</body>
+
+</html>
+
+`)
+
+})
+
+/*
+==================================
+CREATE LISTING
+==================================
+*/
+
+app.post("/list", async (req,res)=>{
+
+await connectDB()
+
+await db.collection("listings")
+.insertOne({
+
+...req.body,
+
+status:"active",
+
+created:Date.now()
+
+})
+
+res.redirect("/market")
+
+})
+
+/*
+==================================
+BUY LISTING
+==================================
+*/
+
+app.post("/buy/:id", async (req,res)=>{
+
+await connectDB()
+
+const listing =
+await db.collection("listings")
+.findOne({
+
+_id:new ObjectId(
+req.params.id
+)
+
+})
+
+if(!listing){
+
+return res.send(
+"LISTING NOT FOUND"
+)
+
+}
+
+const fee =
+(parseFloat(listing.price)
+* MARKETPLACE_FEE) / 100
+
+await db.collection("escrow")
+.insertOne({
+
+listingId:req.params.id,
+
+buyer:"pending",
+
+seller:listing.seller,
+
+price:listing.price,
+
+fee:fee,
+
+status:"pending_release",
+
+created:Date.now()
+
+})
+
+res.send(
+"PAYMENT PENDING ADMIN RELEASE"
+)
+
+})
+
+/*
+==================================
+ADMIN PANEL
+==================================
+*/
+
+app.get("/admin", async (req,res)=>{
+
+await connectDB()
+
+const orders =
+await db.collection("escrow")
+.find({
+status:"pending_release"
+})
+.toArray()
+
+const html =
+orders.map(x=>`
+
+<div style="
+background:#111827;
+padding:20px;
+border-radius:20px;
+margin-bottom:20px;
+">
+
+<p>
+Seller:
+${x.seller}
+</p>
+
+<p>
+Price:
+${x.price} XRP
+</p>
+
+<form
+action="/release/${x._id}"
+method="POST"
+>
+
+<button>
+RELEASE
+</button>
+
+</form>
+
+</div>
+
+`).join("")
+
+res.send(`
+
+<html>
+
+<body style="
+background:#020617;
+font-family:Arial;
+color:white;
+padding:20px;
+">
+
+<h1>
+ADMIN PANEL
+</h1>
+
+${html}
+
+</body>
+
+</html>
+
+`)
+
+})
+
+/*
+==================================
+RELEASE
+==================================
+*/
+
+app.post("/release/:id", async (req,res)=>{
+
+await connectDB()
+
+await db.collection("escrow")
+.updateOne(
+
+{
+_id:new ObjectId(
+req.params.id
+)
+},
+
+{
+$set:{
+status:"released"
+}
+}
+
+)
+
+res.send(
+"ORDER RELEASED"
+)
+
+})
+
+/*
+==================================
+DEPLOY TOKEN
+==================================
+*/
+
+app.get("/deploy", (req,res)=>{
+
+res.send(`
+
+<html>
+
+<body style="
+background:#020617;
+font-family:Arial;
+color:white;
+padding:20px;
+">
+
+<h1>
+DEPLOY TOKEN
+</h1>
+
+<p>
+Deploy Fee:
+5 XRP
+</p>
+
+<form
+action="/deploy"
+method="POST"
+>
+
+<input
+name="ticker"
+placeholder="Ticker"
+required
+>
+
+<br><br>
+
+<input
+name="supply"
+placeholder="Supply"
+required
+>
+
+<br><br>
+
+<input
+name="mint"
+placeholder="Mint Amount"
+required
+>
+
+<br><br>
+
+<button>
+DEPLOY
+</button>
+
+</form>
+
+</body>
+
+</html>
+
+`)
+
+})
+
+app.post("/deploy", async (req,res)=>{
+
+await connectDB()
+
+await db.collection("deploys")
+.insertOne({
+
+ticker:req.body.ticker.toUpperCase(),
+
+supply:req.body.supply,
+
+mint:req.body.mint,
+
+created:Date.now()
+
+})
+
+res.redirect(
+`/collection/${req.body.ticker.toUpperCase()}`
+)
+
+})
+
+/*
+==================================
+COLLECTION PAGE
+==================================
+*/
+
+app.get("/collection/:ticker",
+async (req,res)=>{
+
+await connectDB()
+
+const token =
+await db.collection("deploys")
+.findOne({
+
+ticker:req.params.ticker
+.toUpperCase()
+
+})
+
+if(!token){
+
+return res.send(
+"TOKEN NOT FOUND"
+)
+
+}
+
+res.send(`
+
+<html>
+
+<body style="
+background:#020617;
+font-family:Arial;
+color:white;
+padding:20px;
+">
+
+<h1>
+${token.ticker}
+</h1>
+
+<p>
+Supply:
+${token.supply}
+</p>
+
+<p>
+Mint Amount:
+${token.mint}
+</p>
+
+<a href="/mint/${token.ticker}">
+
+<button>
+MINT ${token.ticker}
+</button>
+
+</a>
+
+</body>
+
+</html>
+
+`)
+
+})
+
+/*
+==================================
+DYNAMIC MINT
+==================================
+*/
+
+app.get("/mint/:ticker",
+async (req,res)=>{
+
+await connectDB()
+
+const token =
+await db.collection("deploys")
+.findOne({
+
+ticker:req.params.ticker
+.toUpperCase()
+
+})
+
+if(!token){
+
+return res.send(
+"TOKEN NOT FOUND"
+)
+
+}
+
+try {
+
+const payload =
+await axios.post(
+
+"https://xumm.app/api/v1/platform/payload",
+
+{
+
+txjson:{
+
+TransactionType:"Payment",
+
+Destination:
+PROJECT_WALLET,
+
+Amount:
+xrpl.xrpToDrops(
+MINT_FEE.toString()
+)
+
+},
+
+custom_meta:{
+identifier:token.ticker
+}
+
+},
+
+{
+
+headers:{
+
+"x-api-key":
+API_KEY,
+
+"x-api-secret":
+API_SECRET,
+
+"Content-Type":
+"application/json"
+
+}
+
+}
+
+)
+
+res.redirect(
+payload.data.next.always
+)
+
+} catch(err){
+
+console.log(err)
+
+res.send(
+"MINT ERROR"
+)
+
+}
+
+})
+
+/*
+==================================
 WEBHOOK
 ==================================
 */
 
-app.post("/webhook", async (req, res) => {
+app.post("/webhook",
+async (req,res)=>{
 
 try {
 
@@ -587,14 +1038,46 @@ data.payloadResponse.signed
 const userWallet =
 data.payloadResponse.account
 
-console.log(
-"PAYMENT SUCCESS:",
-userWallet
+const ticker =
+data.custom_meta.identifier
+
+await connectDB()
+
+const token =
+await db.collection("deploys")
+.findOne({
+ticker
+})
+
+if(token){
+
+await sendInscription(
+
+userWallet,
+
+token.ticker,
+
+parseInt(token.mint),
+
+parseInt(token.supply)
+
 )
 
-await sendXRDOG(
-userWallet
+}else{
+
+await sendInscription(
+
+userWallet,
+
+"XDOG",
+
+PER_MINT,
+
+TOTAL_SUPPLY
+
 )
+
+}
 
 }
 
@@ -619,12 +1102,15 @@ START SERVER
 const PORT =
 process.env.PORT || 3000
 
-app.listen(PORT, async () => {
+app.listen(PORT,
+async ()=>{
 
 await connectXRPL()
 
+await connectDB()
+
 console.log(
-"XDOG AUTO INSCRIPTION LIVE"
+"XDOG FULL LAUNCHPAD LIVE"
 )
 
 })
