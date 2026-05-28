@@ -449,7 +449,7 @@ REMAINING
 <button
 class="btn"
 onclick="
-const wallet = prompt('ENTER XRPL WALLET')
+const wallet = prompt('CONNECT WALLET')
 window.location='/mint?wallet=' + wallet
 ">
 MINT XDOG
