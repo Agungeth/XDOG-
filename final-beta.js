@@ -628,6 +628,22 @@ MARKETPLACE
 ==================================
 */
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.get("/marketplace", async (req,res)=>{
 
 res.send(`
@@ -1243,9 +1259,11 @@ START SERVER
 ==================================
 */
 
-const PORT = process.env.PORT || 3000
+const PORT =
+process.env.PORT || 3000
 
-app.listen(PORT,"0.0.0.0",async ()=>{
+app.listen(PORT,
+async ()=>{
 
 await connectXRPL()
 
@@ -1254,31 +1272,5 @@ await connectDB()
 console.log(
 "XDOG FULL LAUNCHPAD LIVE"
 )
-
-})
-
-
-/* =========================
-REALTIME SOCKET SERVER
-========================= */
-
-const server = require("http").createServer(app)
-
-const io = require("socket.io")(server,{
-cors:{
-origin:"*"
-}
-})
-
-let liveMintCount = 0
-
-io.on("connection",(socket)=>{
-
-console.log("USER CONNECTED")
-
-socket.emit("mintUpdate",{
-minted:liveMintCount,
-remaining:21000000-liveMintCount
-})
 
 })

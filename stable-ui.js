@@ -348,18 +348,7 @@ text-align:center;
 <div class="container">
 
 <div class="logo">
-
-<img
-src="https://raw.githubusercontent.com/Agungeth/XDOG-/main/logo.png"
-style="
-width:120px;
-height:120px;
-border-radius:50%;
-margin-bottom:20px;
-"
-/>
-
-
+<img src="/logo.png">
 <h1>XDOG</h1>
 <p>FIRST XRPL MEME INSCRIPTION</p>
 </div>
@@ -512,201 +501,111 @@ res.send("MINT ERROR")
 })
 
 /*
-====================================
-PUBLIC PAGE
-====================================
-*/
-
-app.get("/public", async (req,res)=>{
-
-res.redirect("/mint")
-
-})
-
-/*
-====================================
-LAUNCHPAD PAGE
-====================================
-*/
-
-
-app.get("/launchpad", async (req,res)=>{
-
-res.send(`
-
-<html>
-
-<head>
-
-<title>XDOG Launchpad</title>
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<style>
-
-body{
-background:#050816;
-font-family:Arial;
-color:white;
-padding:20px;
-}
-
-.card{
-background:#0f172a;
-padding:20px;
-border-radius:20px;
-max-width:500px;
-margin:auto;
-}
-
-input{
-width:100%;
-padding:15px;
-margin-top:10px;
-margin-bottom:15px;
-border:none;
-border-radius:10px;
-background:#111827;
-color:white;
-}
-
-button{
-width:100%;
-padding:15px;
-background:#00ff99;
-border:none;
-border-radius:12px;
-font-weight:bold;
-font-size:18px;
-}
-
-h1{
-color:#00ff99;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="card">
-
-<h1>XDOG LAUNCHPAD</h1>
-
-<p>Create XRPL Meme Token</p>
-
-<input placeholder="Token Name">
-
-<input placeholder="Ticker">
-
-<input placeholder="Supply">
-
-<input placeholder="Mint Price XRP">
-
-<button onclick="window.location='/mint'">
-
-CREATE TOKEN
-
-</button>
-
-</div>
-
-</body>
-
-</html>
-
-`)
-
-})
-
-
-/*
 ==================================
 MARKETPLACE
 ==================================
 */
 
-app.get("/marketplace", async (req,res)=>{
+app.get("/market", async (req,res)=>{
+
+await connectDB()
+
+const listings =
+await db.collection("listings")
+.find()
+.toArray()
+
+const html =
+listings.map(x=>`
+
+<div style="
+background:#111827;
+padding:20px;
+border-radius:20px;
+margin-bottom:20px;
+">
+
+<h2>
+${x.inscription}
+</h2>
+
+<p>
+${x.price} XRP
+</p>
+
+<form
+action="/buy/${x._id}"
+method="POST"
+>
+
+<button>
+BUY NOW
+</button>
+
+</form>
+
+</div>
+
+`).join("")
 
 res.send(`
+
 <html>
 
 <body style="
 background:#020617;
+font-family:Arial;
 color:white;
-font-family:sans-serif;
-padding:30px;
+padding:20px;
 ">
 
-<h1 style="
-font-size:40px;
-margin-bottom:30px;
-">
+<h1>
 XDOG MARKETPLACE
 </h1>
 
+<form
+action="/list"
+method="POST"
+>
+
 <input
+name="seller"
 placeholder="Seller Wallet"
-style="
-width:100%;
-padding:15px;
-margin-bottom:15px;
-background:#111827;
-border:1px solid #333;
-border-radius:12px;
-color:white;
-font-size:18px;
-outline:none;
-"
-/>
+required
+>
+
+<br><br>
 
 <input
+name="inscription"
 placeholder="Inscription"
-style="
-width:100%;
-padding:15px;
-margin-bottom:15px;
-background:#111827;
-border:1px solid #333;
-border-radius:12px;
-color:white;
-font-size:18px;
-outline:none;
-"
-/>
+required
+>
+
+<br><br>
 
 <input
+name="price"
 placeholder="Price XRP"
-style="
-width:100%;
-padding:15px;
-margin-bottom:20px;
-background:#111827;
-border:1px solid #333;
-border-radius:12px;
-color:white;
-font-size:18px;
-outline:none;
-"
-/>
+required
+>
 
-<button style="
-width:100%;
-padding:15px;
-background:#2563eb;
-color:white;
-border:none;
-border-radius:12px;
-font-size:18px;
-font-weight:bold;
-">
+<br><br>
+
+<button>
 CREATE LISTING
 </button>
 
+</form>
+
+<br><hr><br>
+
+${html}
+
 </body>
+
 </html>
+
 `)
 
 })
@@ -1243,9 +1142,11 @@ START SERVER
 ==================================
 */
 
-const PORT = process.env.PORT || 3000
+const PORT =
+process.env.PORT || 3000
 
-app.listen(PORT,"0.0.0.0",async ()=>{
+app.listen(PORT,
+async ()=>{
 
 await connectXRPL()
 
@@ -1254,31 +1155,5 @@ await connectDB()
 console.log(
 "XDOG FULL LAUNCHPAD LIVE"
 )
-
-})
-
-
-/* =========================
-REALTIME SOCKET SERVER
-========================= */
-
-const server = require("http").createServer(app)
-
-const io = require("socket.io")(server,{
-cors:{
-origin:"*"
-}
-})
-
-let liveMintCount = 0
-
-io.on("connection",(socket)=>{
-
-console.log("USER CONNECTED")
-
-socket.emit("mintUpdate",{
-minted:liveMintCount,
-remaining:21000000-liveMintCount
-})
 
 })
