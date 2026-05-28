@@ -286,22 +286,24 @@ content="width=device-width, initial-scale=1.0">
 
 <style>
 
+
 .navbar{
 display:flex;
 justify-content:center;
-gap:20px;
-align-items:center;
+gap:40px;
 padding:20px;
-background:#020617;
 margin-bottom:20px;
+background:#07111f;
+border-bottom:1px solid #00ff99;
 }
 
 .navbar a{
 color:#00ff99;
 text-decoration:none;
 font-weight:bold;
-font-size:14px;
+font-size:16px;
 }
+
 
 body{
 margin:0;
@@ -329,17 +331,25 @@ border:1px solid #00ff99;
 border-radius:10px;
 }
 
-
 .container{
-max-width:500px;
+width:95%;
+max-width:1400px;
 margin:auto;
 background:#0f172a;
 padding:20px;
 border-radius:20px;
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+align-items:flex-start;
+
 }
+
 
 .logo{
 text-align:center;
+flex:1;
+min-width:300px;
 }
 
 .logo img{
@@ -379,6 +389,13 @@ text-align:center;
 </head>
 
 <body>
+
+<div class="navbar">
+<a href="/">HOME</a>
+<a href="/public">PUBLIC MINT</a>
+<a href="/marketplace">MARKETPLACE</a>
+<a href="/launchpad">LAUNCHPAD</a>
+</div>
 
 <div class="container">
 
@@ -448,15 +465,6 @@ MINT XDOG
 <p>Per Mint : 1000 XDOG</p>
 
 <p>Wallet : Xaman</p>
-
-</div>
-
-
-<div class="navbar">
-<a href="/">HOME</a>
-<a href="/public">PUBLIC MINT</a>
-<a href="/marketplace">MARKETPLACE</a>
-<a href="/launchpad">LAUNCHPAD</a>
 
 </div>
 
