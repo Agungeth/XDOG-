@@ -5,7 +5,6 @@
 XDOG FULL XRPL LAUNCHPAD
 ==================================
 */
-
 const express = require("express")
 const axios = require("axios")
 const xrpl = require("xrpl")
@@ -195,7 +194,7 @@ Buffer
 .toString("hex"),
 
 MemoData:
-Buffer
+wBuffer
 .from(inscriptionData)
 .toString("hex")
 
@@ -287,6 +286,23 @@ content="width=device-width, initial-scale=1.0">
 
 <style>
 
+.navbar{
+display:flex;
+justify-content:center;
+gap:20px;
+align-items:center;
+padding:20px;
+background:#020617;
+margin-bottom:20px;
+}
+
+.navbar a{
+color:#00ff99;
+text-decoration:none;
+font-weight:bold;
+font-size:14px;
+}
+
 body{
 margin:0;
 padding:20px;
@@ -294,6 +310,25 @@ background:#050816;
 font-family:Arial;
 color:white;
 }
+
+
+.navbar{
+display:flex;
+justify-content:center;
+gap:20px;
+margin-bottom:20px;
+flex-wrap:wrap;
+}
+
+.navbar a{
+color:#00ff99;
+text-decoration:none;
+font-weight:bold;
+padding:10px 15px;
+border:1px solid #00ff99;
+border-radius:10px;
+}
+
 
 .container{
 max-width:500px;
@@ -416,23 +451,12 @@ MINT XDOG
 
 </div>
 
-<button
-class="btn"
-onclick="window.location='/public'">
-PUBLIC MINT
-</button>
 
-<button
-class="btn"
-onclick="window.location='/marketplace'">
-MARKETPLACE
-</button>
-
-<button
-class="btn"
-onclick="window.location='/launchpad'">
-LAUNCHPAD
-</button>
+<div class="navbar">
+<a href="/">HOME</a>
+<a href="/public">PUBLIC MINT</a>
+<a href="/marketplace">MARKETPLACE</a>
+<a href="/launchpad">LAUNCHPAD</a>
 
 </div>
 
@@ -1282,3 +1306,6 @@ remaining:21000000-liveMintCount
 })
 
 })
+
+
+
