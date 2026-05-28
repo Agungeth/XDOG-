@@ -448,7 +448,10 @@ REMAINING
 
 <button
 class="btn"
-onclick="window.location='/mint'">
+onclick="
+const wallet = prompt('ENTER XRPL WALLET')
+window.location='/mint?wallet=' + wallet
+">
 MINT XDOG
 </button>
 
@@ -1276,6 +1279,47 @@ START SERVER
 */
 
 const PORT = process.env.PORT || 3000
+
+app.get("/mint", async(req,res)=>{
+
+try{
+
+const destination = req.query.wallet
+
+const tx = {
+TransactionType:"Payment",
+Account:wallet.classicAddress,
+Destination:destination,
+Amount:xrpl.xrpToDrops("0.5"),
+Memos:[
+{
+Memo:{
+MemoType:Buffer.from("XDOG").toString("hex"),
+MemoData:Buffer.from("XDOG MINT").toString("hex")
+}
+}
+]
+}
+
+const submitted = await client.submitAndWait(
+tx,
+{wallet}
+)
+
+res.send(`
+<h1>MINT SUCCESS</h1>
+<p>${submitted.result.hash}</p>
+`)
+
+}catch(err){
+
+console.log(err)
+
+res.send("MINT FAILED")
+
+}
+
+})
 
 app.listen(PORT,"0.0.0.0",async ()=>{
 
