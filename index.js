@@ -351,7 +351,7 @@ min-width:250px;
 }
 
 .logo img{
-width:200px;
+width:120px;
 border-radius:50%;
 margin-bottom:20px;
 }
@@ -365,7 +365,7 @@ min-width:250px;
 }
 
 .stat{
-font-size:80px;
+font-size:18px;
 font-weight:bold;
 color:#00ff99;
 text-align:center;
@@ -377,7 +377,7 @@ padding:18px;
 background:#00ff99;
 border:none;
 border-radius:15px;
-font-size:24px;
+font-size:18px;
 font-weight:bold;
 cursor:pointer;
 margin-top:20px;
