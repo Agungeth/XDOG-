@@ -448,10 +448,8 @@ REMAINING
 
 <button
 class="btn"
-onclick="
-const wallet = prompt('CONNECT WALLET')
-window.location='/mint?wallet=' + wallet
-">
+onclick="window.location='/mint'"
+>
 MINT XDOG
 </button>
 
