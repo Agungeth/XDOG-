@@ -336,15 +336,16 @@ width:95%;
 max-width:1400px;
 margin:auto;
 background:#0f172a;
-padding:20px;
-border-radius:20px;
-display:flex;
-gap:20px;
-flex-wrap:wrap;
-align-items:flex-start;
-
+padding:30px;
+border-radius:25px;
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+grid-template-areas:
+"logo mint stats"
+"details mint stats";
+gap:25px;
+align-items:start;
 }
-
 
 .logo{
 text-align:center;
@@ -353,32 +354,53 @@ min-width:300px;
 }
 
 .logo img{
-width:120px;
+width:200px;
 border-radius:50%;
+margin-bottom:20px;
+}
+
+.left-panel{
+width:30%;
+display:flex;
+flex-direction:column;
+gap:20px;
+}
+
+.middle-panel{
+width:35%;
+}
+
+.right-panel{
+width:35%;
 }
 
 .card{
 background:#111827;
-padding:20px;
-border-radius:15px;
-margin-top:15px;
-}
-
-.btn{
-display:block;
-width:100%;
-padding:15px;
-margin-top:15px;
-background:#00ff99;
-color:black;
-font-weight:bold;
-border:none;
-border-radius:12px;
-font-size:18px;
+padding:25px;
+border-radius:20px;
 }
 
 .stat{
-font-size:40px;
+font-size:80px;
+font-weight:bold;
+color:#00ff99;
+text-align:center;
+}
+
+.btn{
+width:100%;
+padding:18px;
+background:#00ff99;
+border:none;
+border-radius:15px;
+font-size:24px;
+font-weight:bold;
+cursor:pointer;
+margin-top:20px;
+}
+
+.stat{
+font-size:80px;
 font-weight:bold;
 color:#00ff99;
 text-align:center;
@@ -399,7 +421,10 @@ text-align:center;
 
 <div class="container">
 
-<div class="logo">
+<div class="left-panel">
+
+<div class="card logo">
+
 
 <img
 src="https://raw.githubusercontent.com/Agungeth/XDOG-/main/logo.png"
@@ -427,6 +452,10 @@ MINTED
 </p>
 
 <hr>
+
+</div>
+
+<div class="right-panel">
 
 <div class="stat">
 ${remaining}
@@ -467,6 +496,14 @@ MINT XDOG
 
 <p>Wallet : Xaman</p>
 
+</div>
+
+</div>
+
+<div class="middle-panel">
+
+</div>
+</div>
 </div>
 
 </body>
