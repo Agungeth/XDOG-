@@ -1124,3 +1124,12 @@ console.log(
 
 })
 
+app.get("/clear", async(req,res)=>{
+
+await connectDB()
+
+await db.collection("listings").deleteMany({})
+
+res.send("LISTINGS CLEARED")
+
+})
