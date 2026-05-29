@@ -50,8 +50,7 @@ const PROJECT_SEED =
 
 
 const MONGO_URI =
-"mongodb+srv://admin:admin123@cluster0.wm6mfrb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-
+"mongodb+srv://admin:admin123@cluster0....mongodb.net/xdog?retryWrites=true&w=majority"
 const ADMIN_WALLET =
 "ra5YfjZMr3WtjGFJrDBQoxAtw3J1dBCMdj"
 

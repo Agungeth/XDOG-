@@ -5,7 +5,21 @@
 XDOG FULL XRPL LAUNCHPAD
 ==================================
 */
+
 const express = require("express")
+const API_KEY =
+"a2f246fc-0098-454b-a5c7-282df3df9127"
+const API_SECRET =
+"3a33d17b-0795-411d-aaf9-cee96308dec4"
+const PROJECT_WALLET =
+"ra5YfjZMr3WtjGFJrDBQoxAtw3J1dBCMdj"
+const PROJECT_SEED =
+"sEdTM4enyVEC69C6pGrU9diRyjkoceP"
+const MONGO_URI =
+"mongodb+srv://admin:admin123@cluster0.wm6mfrb.mongodb.net/xdog?retryWrites=true&w=majority"
+const ADMIN_WALLET =
+"ra5YfjZMr3WtjGFJrDBQoxAtw3J1dBCMdj"
+
 const axios = require("axios")
 const xrpl = require("xrpl")
 const bodyParser = require("body-parser")
@@ -25,34 +39,6 @@ secret:"xdog-secret",
 resave:false,
 saveUninitialized:true
 }))
-
-/*
-==================================
-CONFIG
-==================================
-*/
-
-const API_KEY =
-"a2f246fc-0098-454b-a5c7-282df3df9127"
-
-
-const API_SECRET =
-"3a33d17b-0795-411d-aaf9-cee96308dec4"
-
-
-const PROJECT_WALLET =
-"ra5YfjZMr3WtjGFJrDBQoxAtw3J1dBCMdj"
-
-
-const PROJECT_SEED =
-"sEdTM4enyVEC69C6pGrU9diRyjkoceP"
-
-
-const MONGO_URI =
-"mongodb+srv://admin:admin123@cluster0.wm6mfrb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-
-const ADMIN_WALLET =
-"ra5YfjZMr3WtjGFJrDBQoxAtw3J1dBCMdj"
 
 /*
 ==================================
@@ -194,7 +180,7 @@ Buffer
 .toString("hex"),
 
 MemoData:
-wBuffer
+Buffer
 .from(inscriptionData)
 .toString("hex")
 
@@ -286,25 +272,6 @@ content="width=device-width, initial-scale=1.0">
 
 <style>
 
-
-.navbar{
-display:flex;
-justify-content:center;
-gap:40px;
-padding:20px;
-margin-bottom:20px;
-background:#07111f;
-border-bottom:1px solid #00ff99;
-}
-
-.navbar a{
-color:#00ff99;
-text-decoration:none;
-font-weight:bold;
-font-size:16px;
-}
-
-
 body{
 margin:0;
 padding:20px;
@@ -313,89 +280,31 @@ font-family:Arial;
 color:white;
 }
 
-
-.navbar{
-display:flex;
-justify-content:center;
-gap:20px;
-margin-bottom:20px;
-flex-wrap:wrap;
-}
-
-.navbar a{
-color:#00ff99;
-text-decoration:none;
-font-weight:bold;
-padding:10px 15px;
-border:1px solid #00ff99;
-border-radius:10px;
-}
-
 .container{
-width:95%;
-max-width:1200px;
+max-width:500px;
 margin:auto;
 background:#0f172a;
-padding:20px;
+padding:25px;
 border-radius:20px;
-display:flex;
-flex-wrap:wrap;
-gap:20px;
-justify-content:center;
 }
 
-.logo{
-text-align:center;
-flex:1;
-min-width:250px;
-}
-
-.logo img{
-width:120px;
-border-radius:50%;
-margin-bottom:8px;
-}
-
-.card{
-background:#111827;
-padding:15px;
-border-radius:20px;
-flex:1;
-min-width:250px;
-margin-bottom:15px;
-}
-
-.stat{
-font-size:20px;
-font-weight:bold;
-color:#00ff99;
-text-align:center;
-}
-
-.btn{
+button{
 width:100%;
 padding:18px;
-background:#00ff99;
 border:none;
-border-radius:15px;
+border-radius:12px;
+background:#00ff99;
 font-size:18px;
 font-weight:bold;
 cursor:pointer;
-margin-top:20px;
+margin-top:15px;
 }
 
-.card h2{
-font-size:20px;
-text-align:center;
-color:white;
+.box{
+background:#111827;
+padding:15px;
+border-radius:12px;
 margin-bottom:15px;
-}
-
-.stat{
-font-size:24px;
-font-weight:bold;
-color:#00ff99;
-text-align:center;
 }
 
 </style>
@@ -404,87 +313,59 @@ text-align:center;
 
 <body>
 
-<div class="navbar">
-<a href="/">HOME</a>
-<a href="/public">PUBLIC MINT</a>
-<a href="/marketplace">MARKETPLACE</a>
-<a href="/launchpad">LAUNCHPAD</a>
-</div>
-
 <div class="container">
 
-<div class="card logo">
+<h1>
+XDOG
+</h1>
 
-
-<img
-src="https://raw.githubusercontent.com/Agungeth/XDOG-/main/logo.png"
-style="
-width:120px;
-height:120px;
-border-radius:50%;
-margin-bottom:20px;
-"
-/>
-
-<h1>XDOG</h1>
-<p>FIRST XRPL MEME INSCRIPTION</p>
-</div>
-
-<div class="card">
-
-<div class="stat">
-${minted}
-</div>
-
-<div class="stat">
-${minted}
-</div>
-
-<p align="center" style="font-size:14px;color:#aaa;">
-MINTED
+<p>
+FIRST XRPL INSCRIPTION LAUNCHPAD
 </p>
 
-<hr>
+<div class="box">
+Minted:
+${minted}
+</div>
 
-<div class="stat">
+<div class="box">
+Remaining:
 ${remaining}
 </div>
 
-<p align="center" style="font-size:14px;color:#aaa;">
-REMAINING
-</p>
-
+<div class="box">
+Floor:
+${floor} XRP
 </div>
 
-<div class="card">
-
-<h2>MINT PRICE</h2>
-<div class="stat">
-0.5 XRP
+<div class="box">
+Progress:
+${progress}%
 </div>
 
-<button
-class="btn"
-onclick="window.location='/mint'"
->
+<a href="/mint">
+<button>
 MINT XDOG
 </button>
+</a>
 
-</div>
+<a href="/market">
+<button>
+MARKETPLACE
+</button>
+</a>
 
-<div class="card">
+<a href="/deploy">
+<button>
+DEPLOY TOKEN
+</button>
+</a>
 
-<h2>DETAILS</h2>
-
-<p>Mint Status : LIVE</p>
-
-<p>Supply : 21,000,000</p>
-
-<p>Per Mint : 1000 XDOG</p>
-
-<p>Wallet : Xaman</p>
-
-</div>
+<a href="/admin">
+<button>
+ADMIN PANEL
+</button>
+</a>
 
 </div>
 
@@ -564,203 +445,111 @@ res.send("MINT ERROR")
 })
 
 /*
-====================================
-PUBLIC PAGE
-====================================
-*/
-
-app.get("/public", async (req,res)=>{
-
-res.redirect("/mint")
-
-})
-
-/*
-====================================
-LAUNCHPAD PAGE
-====================================
-*/
-
-
-app.get("/launchpad", async (req,res)=>{
-
-res.send(`
-
-<html>
-
-<head>
-
-<title>XDOG Launchpad</title>
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<style>
-
-body{
-background:#050816;
-font-family:Arial;
-color:white;
-padding:20px;
-}
-
-.card{
-background:#0f172a;
-padding:20px;
-border-radius:20px;
-max-width:500px;
-margin:auto;
-}
-
-input{
-width:100%;
-padding:15px;
-margin-top:10px;
-margin-bottom:15px;
-border:none;
-border-radius:10px;
-background:#111827;
-color:white;
-}
-
-button{
-width:100%;
-padding:15px;
-background:#00ff99;
-border:none;
-border-radius:12px;
-font-weight:bold;
-font-size:18px;
-}
-
-h1{
-color:#00ff99;
-margin-bottom:5px;
-font-size:38px;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="card">
-
-<h1>XDOG LAUNCHPAD</h1>
-
-<p>Create XRPL Meme Token</p>
-
-<input placeholder="Token Name">
-
-<input placeholder="Ticker">
-
-<input placeholder="Supply">
-
-<input placeholder="Mint Price XRP">
-
-<button onclick="window.location='/mint'">
-
-CREATE TOKEN
-
-</button>
-
-</div>
-
-</body>
-
-</html>
-
-`)
-
-})
-
-
-/*
 ==================================
 MARKETPLACE
 ==================================
 */
 
-app.get("/marketplace", async (req,res)=>{
+app.get("/market", async (req,res)=>{
+
+await connectDB()
+
+const listings =
+await db.collection("listings")
+.find()
+.toArray()
+
+const html =
+listings.map(x=>`
+
+<div style="
+background:#111827;
+padding:20px;
+border-radius:20px;
+margin-bottom:20px;
+">
+
+<h2>
+${x.inscription}
+</h2>
+
+<p>
+${x.price} XRP
+</p>
+
+<form
+action="/buy/${x._id}"
+method="POST"
+>
+
+<button>
+BUY NOW
+</button>
+
+</form>
+
+</div>
+
+`).join("")
 
 res.send(`
+
 <html>
 
 <body style="
 background:#020617;
+font-family:Arial;
 color:white;
-font-family:sans-serif;
-padding:30px;
+padding:20px;
 ">
 
-<h1 style="
-font-size:40px;
-margin-bottom:30px;
-">
+<h1>
 XDOG MARKETPLACE
 </h1>
 
+<form
+action="/list"
+method="POST"
+>
+
 <input
+name="seller"
 placeholder="Seller Wallet"
-style="
-width:100%;
-padding:15px;
-margin-bottom:15px;
-background:#111827;
-border:1px solid #333;
-border-radius:12px;
-color:white;
-font-size:18px;
-outline:none;
-"
-/>
+required
+>
+
+<br><br>
 
 <input
+name="inscription"
 placeholder="Inscription"
-style="
-width:100%;
-padding:15px;
-margin-bottom:15px;
-background:#111827;
-border:1px solid #333;
-border-radius:12px;
-color:white;
-font-size:18px;
-outline:none;
-"
-/>
+required
+>
+
+<br><br>
 
 <input
+name="price"
 placeholder="Price XRP"
-style="
-width:100%;
-padding:15px;
-margin-bottom:20px;
-background:#111827;
-border:1px solid #333;
-border-radius:12px;
-color:white;
-font-size:18px;
-outline:none;
-"
-/>
+required
+>
 
-<button style="
-width:100%;
-padding:15px;
-background:#2563eb;
-color:white;
-border:none;
-border-radius:12px;
-font-size:18px;
-font-weight:bold;
-">
+<br><br>
+
+<button>
 CREATE LISTING
 </button>
 
+</form>
+
+<br><hr><br>
+
+${html}
+
 </body>
+
 </html>
+
 `)
 
 })
@@ -1030,24 +819,46 @@ DEPLOY
 
 app.post("/deploy", async (req,res)=>{
 
-await connectDB()
+const payload = await axios.post(
 
-await db.collection("deploys")
-.insertOne({
+"https://xumm.app/api/v1/platform/payload",
 
-ticker:req.body.ticker.toUpperCase(),
+{
 
-supply:req.body.supply,
+txjson:{
 
-mint:req.body.mint,
+TransactionType:"Payment",
 
-created:Date.now()
+Destination:PROJECT_WALLET,
 
-})
+Amount:String(5 * 1000000)
 
-res.redirect(
-`/collection/${req.body.ticker.toUpperCase()}`
+},
+
+custom_meta:{
+
+identifier:"DEPLOY",
+
+blob:req.body
+
+}
+
+},
+
+{
+
+headers:{
+
+"X-API-Key": "a2f246fc-0098-454b-a5c7-282df3df9127",
+"X-API-Secret": "3a33d17b-0795-411d-aaf9-cee96308dec4"
+
+}
+
+}
+
 )
+
+res.redirect(payload.data.next.always)
 
 })
 
@@ -1297,50 +1108,11 @@ START SERVER
 ==================================
 */
 
-const PORT = process.env.PORT || 3000
+const PORT =
+process.env.PORT || 3000
 
-app.get("/mint", async(req,res)=>{
-
-try{
-
-const destination = req.query.wallet
-
-const tx = {
-TransactionType:"Payment",
-Account:wallet.classicAddress,
-Destination:destination,
-Amount:xrpl.xrpToDrops("0.5"),
-Memos:[
-{
-Memo:{
-MemoType:Buffer.from("XDOG").toString("hex"),
-MemoData:Buffer.from("XDOG MINT").toString("hex")
-}
-}
-]
-}
-
-const submitted = await client.submitAndWait(
-tx,
-{wallet}
-)
-
-res.send(`
-<h1>MINT SUCCESS</h1>
-<p>${submitted.result.hash}</p>
-`)
-
-}catch(err){
-
-console.log(err)
-
-res.send("MINT FAILED")
-
-}
-
-})
-
-app.listen(PORT,"0.0.0.0",async ()=>{
+app.listen(PORT,
+async ()=>{
 
 await connectXRPL()
 
@@ -1351,32 +1123,4 @@ console.log(
 )
 
 })
-
-
-/* =========================
-REALTIME SOCKET SERVER
-========================= */
-
-const server = require("http").createServer(app)
-
-const io = require("socket.io")(server,{
-cors:{
-origin:"*"
-}
-})
-
-let liveMintCount = 0
-
-io.on("connection",(socket)=>{
-
-console.log("USER CONNECTED")
-
-socket.emit("mintUpdate",{
-minted:liveMintCount,
-remaining:21000000-liveMintCount
-})
-
-})
-
-
 
