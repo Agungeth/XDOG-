@@ -353,15 +353,16 @@ min-width:250px;
 .logo img{
 width:120px;
 border-radius:50%;
-margin-bottom:20px;
+margin-bottom:8px;
 }
 
 .card{
 background:#111827;
-padding:25px;
+padding:15px;
 border-radius:20px;
 flex:1;
 min-width:250px;
+margin-bottom:15px;
 }
 
 .stat{
@@ -457,8 +458,7 @@ REMAINING
 
 <div class="card">
 
-<h2>PRICE PER MINT</h2>
-
+<h2>MINT PRICE</h2>
 <div class="stat">
 0.5 XRP
 </div>
@@ -635,6 +635,8 @@ font-size:18px;
 
 h1{
 color:#00ff99;
+margin-bottom:5px;
+font-size:38px;
 }
 
 </style>
