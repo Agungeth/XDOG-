@@ -364,8 +364,14 @@ flex:1;
 min-width:250px;
 }
 
+.card h2{
+font-size:28px;
+text-align:center;
+color:white;
+}
+
 .stat{
-font-size:20px;
+font-size:24px;
 font-weight:bold;
 color:#00ff99;
 text-align:center;
@@ -383,15 +389,8 @@ cursor:pointer;
 margin-top:20px;
 }
 
-.card h2{
-font-size:20px;
-text-align:center;
-color:white;
-margin-bottom:15px;
-}
-
 .stat{
-font-size:24px;
+font-size:18px;
 font-weight:bold;
 color:#00ff99;
 text-align:center;
@@ -430,11 +429,6 @@ margin-bottom:20px;
 </div>
 
 <div class="card">
-
-<div class="stat">
-${minted}
-</div>
-
 <div class="stat">
 ${minted}
 </div>
