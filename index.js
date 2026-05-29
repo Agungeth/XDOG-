@@ -333,18 +333,11 @@ border-radius:10px;
 
 .container{
 width:95%;
-max-width:1400px;
+max-width:1200px;
 margin:auto;
 background:#0f172a;
-padding:30px;
-border-radius:25px;
-display:grid;
-grid-template-columns:1fr 1fr 1fr;
-grid-template-areas:
-"logo mint stats"
-"details mint stats";
-gap:25px;
-align-items:start;
+padding:20px;
+border-radius:20px;
 }
 
 .logo{
@@ -357,21 +350,6 @@ min-width:300px;
 width:200px;
 border-radius:50%;
 margin-bottom:20px;
-}
-
-.left-panel{
-width:30%;
-display:flex;
-flex-direction:column;
-gap:20px;
-}
-
-.middle-panel{
-width:35%;
-}
-
-.right-panel{
-width:35%;
 }
 
 .card{
@@ -421,8 +399,6 @@ text-align:center;
 
 <div class="container">
 
-<div class="left-panel">
-
 <div class="card logo">
 
 
@@ -455,7 +431,6 @@ MINTED
 
 </div>
 
-<div class="right-panel">
 
 <div class="stat">
 ${remaining}
@@ -498,12 +473,6 @@ MINT XDOG
 
 </div>
 
-</div>
-
-<div class="middle-panel">
-
-</div>
-</div>
 </div>
 
 </body>
