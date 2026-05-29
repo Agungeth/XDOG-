@@ -338,12 +338,16 @@ margin:auto;
 background:#0f172a;
 padding:20px;
 border-radius:20px;
+display:flex;
+flex-wrap:wrap;
+gap:20px;
+justify-content:center;
 }
 
 .logo{
 text-align:center;
 flex:1;
-min-width:300px;
+min-width:250px;
 }
 
 .logo img{
@@ -356,6 +360,8 @@ margin-bottom:20px;
 background:#111827;
 padding:25px;
 border-radius:20px;
+flex:1;
+min-width:250px;
 }
 
 .stat{
