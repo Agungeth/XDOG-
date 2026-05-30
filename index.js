@@ -361,9 +361,9 @@ DEPLOY TOKEN
 </button>
 </a>
 
-<a href="/admin">
+<a href="/mint">
 <button>
-ADMIN PANEL
+PUBLIC MINT
 </button>
 </a>
 
@@ -860,6 +860,57 @@ headers:{
 
 res.redirect(payload.data.next.always)
 
+})
+
+app.get("/publicmint", async (req,res)=>{
+
+await connectDB()
+
+const tokens =
+await db.collection("deploys")
+.find({})
+.toArray()
+
+const html =
+tokens.map(token => `
+<div style="
+background:#0a1430;
+padding:20px;
+margin:10px;
+border-radius:10px;
+">
+<h2>${token.ticker}</h2>
+
+<p>
+Mint Amount:
+${token.mint}
+</p>
+
+<a href="/collection/${token.ticker}">
+<button>
+OPEN COLLECTION
+</button>
+</a>
+
+</div>
+`).join("")
+
+res.send(`
+<html>
+<body style="
+background:#020617;
+color:white;
+font-family:Arial;
+padding:20px;
+">
+
+<h1>PUBLIC MINT</h1>
+
+${html}
+
+</body>
+</html>
+`)
 })
 
 /*
