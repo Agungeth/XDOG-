@@ -870,7 +870,7 @@ const tokens =
 await db.collection("deploys")
 .find({})
 .toArray()
-
+console.log("TOKENS =", tokens)
 const html =
 tokens.map(token => `
 <div style="
