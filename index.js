@@ -361,11 +361,11 @@ DEPLOY TOKEN
 </button>
 </a>
 
-<a href="/mint">
+<a href="/publicmint">
 <button>
 PUBLIC MINT
 </button>
-</a>
+</a
 
 </div>
 
