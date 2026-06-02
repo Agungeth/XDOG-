@@ -42,8 +42,7 @@ const API_SECRET =
 
 
 const PROJECT_WALLET =
-"ra5YfjZMr3WtjGFJrDBQoxAtw3J1dBCMdj"
-
+"rPsHdHqirg5UHfukqUtsTgFsPJqrn2GUjc"
 
 const PROJECT_SEED =
 "sEdTM4enyVEC69C6pGrU9diRyjkoceP"
@@ -62,8 +61,7 @@ FEES
 */
 
 const DEPLOY_FEE = 5
-const MARKETPLACE_FEE = 5
-const MINT_FEE = 1
+const MARKETPLACE_FEE = 0.05
 
 /*
 ==================================
@@ -112,7 +110,7 @@ XRPL CLIENT
 
 const client =
 new xrpl.Client(
-"wss://s1.ripple.com"
+"wss://xrplcluster.com"
 )
 
 async function connectXRPL(){
@@ -416,25 +414,25 @@ MINT XDOG
 
 </div>
 
-<button
-class="btn"
-onclick="window.location='/public'">
-PUBLIC MINT
+<div class="menu">
+
+<button class="btn"
+onclick="window.location='/deploy'">
+DEPLOY TOKEN
 </button>
 
-<button
-class="btn"
-onclick="window.location='/marketplace'">
-MARKETPLACE
-</button>
-
-<button
-class="btn"
+<button class="btn"
 onclick="window.location='/launchpad'">
 LAUNCHPAD
 </button>
 
+<button class="btn"
+onclick="window.location='/marketplace'">
+MARKETPLACE
+</button>
+
 </div>
+
 
 </body>
 
@@ -454,6 +452,12 @@ app.get("/mint", async (req,res)=>{
 
 try {
 
+console.log({
+  TransactionType:"Payment",
+  Destination:PROJECT_WALLET,
+  Amount:xrpl.xrpToDrops("0.5")
+})
+
 const payload =
 await axios.post(
 
@@ -462,25 +466,23 @@ await axios.post(
 {
 
 txjson:{
-
-TransactionType:"Payment",
-
-Destination:
-PROJECT_WALLET,
-
-Amount:MINT_PRICE
-
+  TransactionType:"Payment",
+  Destination:PROJECT_WALLET,
+  Amount:xrpl.xrpToDrops("0.5")
 },
 
 custom_meta:{
-identifier:"XDOG"
-}
-
+  identifier:"MINT_XDOG"
 },
 
+options:{
+  return_url:{
+    app:"xaman://"
+  }
+}
+},
 {
-
-headers:{
+  headers:{
 
 "x-api-key":
 API_KEY,
@@ -494,12 +496,16 @@ API_SECRET,
 }
 
 }
-
 )
 
-res.redirect(
-payload.data.next.always
-)
+console.log("UUID =", payload.data.uuid)
+console.log(payload.data)
+
+res.send(`
+<script>
+window.location.href='xumm://payload/${payload.data.uuid}';
+</script>
+`)
 
 } catch(err){
 
@@ -512,25 +518,12 @@ res.send("MINT ERROR")
 })
 
 /*
-====================================
-PUBLIC PAGE
-====================================
+===========================
+DEPLOY PAGE
+===========================
 */
 
-app.get("/public", async (req,res)=>{
-
-res.redirect("/mint")
-
-})
-
-/*
-====================================
-LAUNCHPAD PAGE
-====================================
-*/
-
-
-app.get("/launchpad", async (req,res)=>{
+app.get("/deploy", async (req,res)=>{
 
 res.send(`
 
@@ -595,21 +588,25 @@ color:#00ff99;
 
 <h1>XDOG LAUNCHPAD</h1>
 
-<p>Create XRPL Meme Token</p>
+<p>Create Token</p>
 
-<input placeholder="Token Name">
+<form action="/deploy" method="POST">
 
-<input placeholder="Ticker">
+<input name="name" placeholder="Token Name">
 
-<input placeholder="Supply">
+<input name="ticker" placeholder="Ticker">
 
-<input placeholder="Mint Price XRP">
+<input name="supply" placeholder="Supply">
 
-<button onclick="window.location='/mint'">
+<input name="price" placeholder="Mint Price XRP">
 
+<input name="mint" placeholder="Mint Amount">
+
+<button type="submit">
 CREATE TOKEN
-
 </button>
+
+</form>
 
 </div>
 
@@ -627,22 +624,6 @@ CREATE TOKEN
 MARKETPLACE
 ==================================
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 app.get("/marketplace", async (req,res)=>{
 
@@ -732,23 +713,18 @@ CREATE LISTING
 CREATE LISTING
 ==================================
 */
-
 app.post("/list", async (req,res)=>{
 
 await connectDB()
 
-await db.collection("listings")
-.insertOne({
-
-...req.body,
-
-status:"active",
-
+await db.collection("listings").insertOne({
+seller:req.body.seller,
+inscription:req.body.inscription,
+price:req.body.price,
 created:Date.now()
-
 })
 
-res.redirect("/market")
+res.redirect("/marketplace")
 
 })
 
@@ -953,16 +929,16 @@ method="POST"
 >
 
 <input
-name="ticker"
-placeholder="Ticker"
+name="supply"
+placeholder="Supply"
 required
 >
 
 <br><br>
 
 <input
-name="supply"
-placeholder="Supply"
+name="price"
+placeholder="Mint Price XRP"
 required
 >
 
@@ -980,8 +956,6 @@ required
 DEPLOY
 </button>
 
-</form>
-
 </body>
 
 </html>
@@ -995,21 +969,126 @@ app.post("/deploy", async (req,res)=>{
 await connectDB()
 
 await db.collection("deploys")
+
 .insertOne({
 
 ticker:req.body.ticker.toUpperCase(),
 
 supply:req.body.supply,
 
+price:req.body.price,
+
 mint:req.body.mint,
+
+owner:"",
 
 created:Date.now()
 
 })
 
-res.redirect(
-`/collection/${req.body.ticker.toUpperCase()}`
+try {
+
+const payload =
+await axios.post(
+"https://xumm.app/api/v1/platform/payload",
+{
+txjson:{
+TransactionType:"Payment",
+Destination:PROJECT_WALLET,
+Amount:xrpl.xrpToDrops(
+DEPLOY_FEE.toString()
 )
+
+},
+custom_meta:{
+identifier:req.body.ticker.toUpperCase()
+}
+},
+{
+headers:{
+"x-api-key":API_KEY,
+"x-api-secret":API_SECRET,
+"Content-Type":"application/json"
+}
+}
+)
+
+res.redirect(
+payload.data.next.always
+)
+
+} catch(err){
+
+console.log(err)
+
+res.send(
+"DEPLOY ERROR"
+)
+
+}
+
+})
+
+/*
+================================
+PUBLIC MINT
+================================
+*/
+
+app.get("/public", async (req,res)=>{
+
+await connectDB()
+
+const tokens =
+await db.collection("deploys")
+.find({})
+.toArray()
+
+let html = `
+<html>
+<body style="
+background:#050816;
+color:white;
+font-family:Arial;
+padding:20px;
+">
+
+<h1>XDOG PUBLIC MINT</h1>
+`
+
+tokens.forEach(token=>{
+
+html += `
+<div style="
+background:#111827;
+padding:20px;
+margin-bottom:15px;
+border-radius:15px;
+">
+
+<h2>${token.ticker}</h2>
+
+<p>Supply : ${token.supply}</p>
+
+<p>Mint Price : ${token.price} XRP</p>
+
+<p>Mint Amount : ${token.mint}</p>
+
+<a href="/collection/${token.ticker}">
+<button>MINT</button>
+</a>
+
+</div>
+`
+
+})
+
+html += `
+</body>
+</html>
+`
+
+res.send(html)
 
 })
 
@@ -1112,6 +1191,8 @@ return res.send(
 
 try {
 
+console.log(payload.data)
+
 const payload =
 await axios.post(
 
@@ -1122,19 +1203,21 @@ await axios.post(
 txjson:{
 
 TransactionType:"Payment",
-
-Destination:
-PROJECT_WALLET,
-
-Amount:
-xrpl.xrpToDrops(
-MINT_FEE.toString()
+Destination:PROJECT_WALLET,
+Amount:xrpl.xrpToDrops(
+token.price.toString()
 )
 
 },
 
 custom_meta:{
-identifier:token.ticker
+ identifier:token.ticker
+},
+
+options:{
+ return_url:{
+   app:"xaman://"
+ }
 }
 
 },
@@ -1158,9 +1241,16 @@ API_SECRET,
 
 )
 
-res.redirect(
-payload.data.next.always
-)
+console.log(payload.data.next)
+
+console.log("UUID =", payload.data.uuid)
+console.log("DEEPLINK =", `xumm://payload/${payload.data.uuid}`)
+
+res.send(`
+<script>
+window.location.href='xumm://payload/${payload.data.uuid}'
+</script>
+`)
 
 } catch(err){
 
@@ -1198,8 +1288,15 @@ data.payloadResponse.signed
 const userWallet =
 data.payloadResponse.account
 
-const ticker =
+const identifier =
 data.custom_meta.identifier
+const isMint =
+identifier.startsWith("MINT_")
+
+const ticker =
+isMint
+? identifier.replace("MINT_","")
+: identifier
 
 await connectDB()
 
@@ -1208,6 +1305,16 @@ await db.collection("deploys")
 .findOne({
 ticker
 })
+
+await db.collection("deploys")
+.updateOne(
+ { ticker },
+ {
+  $set:{
+   owner:userWallet
+  }
+ }
+)
 
 if(token){
 
@@ -1254,6 +1361,60 @@ res.send("WEBHOOK ERROR")
 })
 
 /*
+====================================
+AUTO MARKETPLACE
+====================================
+*/
+
+app.post("/list/:ticker", async (req,res)=>{
+
+ await connectDB()
+
+ const token =
+ await db.collection("deploys")
+ .findOne({
+  ticker:req.params.ticker.toUpperCase()
+ })
+
+ if(!token){
+  return res.send("TOKEN NOT FOUND")
+ }
+
+ await db.collection("listings")
+ .insertOne({
+
+  ticker:token.ticker,
+
+  owner:token.owner,
+
+  supply:token.supply,
+
+  mint:token.mint,
+
+  price:req.body.price || "10",
+
+  created:Date.now()
+
+ })
+
+ res.send("LISTED")
+
+})
+
+app.get("/marketplace", async (req,res)=>{
+
+ await connectDB()
+
+ const listings =
+ await db.collection("listings")
+ .find({})
+ .toArray()
+
+ res.json(listings)
+
+})
+
+/*
 ==================================
 START SERVER
 ==================================
@@ -1274,3 +1435,4 @@ console.log(
 )
 
 })
+

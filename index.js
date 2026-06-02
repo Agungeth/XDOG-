@@ -1,5 +1,8 @@
 
 
+
+
+
 /*
 ==================================
 XDOG FULL XRPL LAUNCHPAD
@@ -11,8 +14,10 @@ const API_KEY =
 "a2f246fc-0098-454b-a5c7-282df3df9127"
 const API_SECRET =
 "3a33d17b-0795-411d-aaf9-cee96308dec4"
+
 const PROJECT_WALLET =
-"ra5YfjZMr3WtjGFJrDBQoxAtw3J1dBCMdj"
+"rPsHdHqirg5UHfukqUtsTgFsPJqrn2GUjc"
+
 const PROJECT_SEED =
 "sEdTM4enyVEC69C6pGrU9diRyjkoceP"
 const MONGO_URI =
@@ -97,7 +102,7 @@ XRPL CLIENT
 
 const client =
 new xrpl.Client(
-"wss://s1.ripple.com"
+"wss://xrplcluster.com"
 )
 
 async function connectXRPL(){
@@ -139,19 +144,30 @@ PROJECT_SEED
 const inscriptionData =
 JSON.stringify({
 
-protocol:"xrdog",
+  protocol:"xrdog",
 
-op:"mint",
+  op:"mint",
 
-tick:ticker,
+  tick:"XDOG",
 
-amount:mintAmount,
+  name:"XDOG",
 
-supply:supply,
+  description:"Launchpad Inscription Token XRPL",
 
-minted:minted + mintAmount
+  creator: wallet.address,
+
+  supply:21000000,
+
+  amount:1000,
+
+  mintPrice:0.5,
+
+  mintLimit:"unlimited"
 
 })
+
+console.log("DESTINATION =", destinationWallet)
+console.log("PROJECT =", wallet.address)
 
 const tx = {
 
@@ -477,10 +493,21 @@ ${x.inscription}
 ${x.price} XRP
 </p>
 
+<p>
+Amount: ${x.amount}
+</p>
+
 <form
 action="/buy/${x._id}"
 method="POST"
 >
+<input
+name="buyAmount"
+placeholder="Amount to buy"
+required
+>
+
+<br><br>
 
 <button>
 BUY NOW
@@ -522,6 +549,7 @@ required
 
 <input
 name="inscription"
+
 placeholder="Inscription"
 required
 >
@@ -529,10 +557,16 @@ required
 <br><br>
 
 <input
+name="amount"
+placeholder="Amount"
+/>
+
+<br><br>
+
+<input
 name="price"
 placeholder="Price XRP"
-required
->
+/>
 
 <br><br>
 
@@ -564,10 +598,20 @@ app.post("/list", async (req,res)=>{
 
 await connectDB()
 
+const deploy = await db.collection("deploys").findOne({
+  ticker:req.body.ticker
+})
+
+if(!deploy){
+  return res.send("TOKEN NOT FOUND")
+}
+
 await db.collection("listings")
 .insertOne({
 
 ...req.body,
+
+seller:deploy.owner,
 
 status:"active",
 
@@ -589,6 +633,12 @@ app.post("/buy/:id", async (req,res)=>{
 
 await connectDB()
 
+const buyAmount =
+parseInt(req.body.buyAmount)
+
+console.log("BUY AMOUNT =", buyAmount)
+console.log("BODY =", req.body)
+
 const listing =
 await db.collection("listings")
 .findOne({
@@ -607,14 +657,27 @@ return res.send(
 
 }
 
+if(buyAmount > parseInt(listing.amount)){
+
+return res.send(
+"AMOUNT EXCEEDS AVAILABLE TOKENS"
+)
+
+}
+
+const totalXrp =
+buyAmount * parseFloat(listing.price)
+
 const fee =
 (parseFloat(listing.price)
 * MARKETPLACE_FEE) / 100
 
+const orderId = "ORD-" + Date.now()
+
 await db.collection("escrow")
 .insertOne({
 
-listingId:req.params.id,
+orderId:orderId,
 
 buyer:"pending",
 
@@ -622,17 +685,49 @@ seller:listing.seller,
 
 price:listing.price,
 
+amount:buyAmount,
+
 fee:fee,
 
-status:"pending_release",
+status:"waiting_payment",
 
 created:Date.now()
-
 })
 
-res.send(
-"PAYMENT PENDING ADMIN RELEASE"
+await db.collection("listings")
+.updateOne(
+{
+  _id:new ObjectId(req.params.id)
+},
+{
+  $set:{
+    amount:
+      parseInt(listing.amount) - buyAmount
+  }
+}
 )
+
+res.send(`
+<h1>ORDER CREATED</h1>
+
+<p>Order ID: ${orderId}</p>
+
+<p>Token: ${listing.inscription}</p>
+
+<p>Amount: ${buyAmount}</p>
+
+<p>Total XRP: ${totalXrp}</p>
+
+<p>
+Send XRP to:
+rPsHdHqirg5UHfukqUtsTgFsPJqrn2GUjc
+</p>
+
+<p>
+Status:
+WAITING PAYMENT
+</p>
+`)
 
 })
 
@@ -641,6 +736,98 @@ res.send(
 ADMIN PANEL
 ==================================
 */
+
+app.get("/order/:orderId", async (req,res)=>{
+
+await connectDB()
+
+const order =
+await db.collection("escrow")
+.findOne({
+orderId:req.params.orderId
+})
+
+if(!order){
+return res.send("ORDER NOT FOUND")
+}
+
+res.send(`
+<h1>ORDER STATUS</h1>
+
+<p>Order ID: ${order.orderId}</p>
+
+<p>Status: ${order.status}</p>
+
+<p>Seller: ${order.seller}</p>
+
+<p>Amount: ${order.amount}</p>
+
+<p>Price: ${order.price}</p>
+
+`)
+})
+
+app.get("/debug-escrow", async (req,res)=>{
+
+await connectDB()
+
+const data =
+await db.collection("escrow")
+.find()
+.toArray()
+
+res.send(
+"<pre>" +
+JSON.stringify(data,null,2) +
+"</pre>"
+)
+
+})
+
+app.get("/debug-listings", async(req,res)=>{
+
+  await connectDB()
+
+  const data =
+  await db.collection("listings")
+  .find()
+  .toArray()
+
+  res.send(
+    "<pre>" +
+    JSON.stringify(data,null,2) +
+    "</pre>"
+  )
+
+})
+
+app.get("/clear-escrow", async(req,res)=>{
+
+await connectDB()
+
+await db.collection("escrow").deleteMany({})
+
+res.send("ESCROW CLEARED")
+
+})
+
+app.get("/orders", async(req,res)=>{
+
+  await connectDB()
+
+  const orders =
+  await db.collection("escrow")
+  .find()
+  .sort({created:-1})
+  .toArray()
+
+  res.send(
+    "<pre>" +
+    JSON.stringify(orders,null,2) +
+    "</pre>"
+  )
+
+})
 
 app.get("/admin", async (req,res)=>{
 
@@ -1097,6 +1284,7 @@ data.payloadResponse.signed
 
 const userWallet =
 data.payloadResponse.account
+console.log("USER WALLET =", userWallet)
 
 const ticker =
 data.custom_meta.identifier

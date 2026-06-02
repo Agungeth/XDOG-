@@ -1,8 +1,5 @@
 
 
-
-
-
 /*
 ==================================
 XDOG FULL XRPL LAUNCHPAD
@@ -10,21 +7,6 @@ XDOG FULL XRPL LAUNCHPAD
 */
 
 const express = require("express")
-const API_KEY =
-"a2f246fc-0098-454b-a5c7-282df3df9127"
-const API_SECRET =
-"3a33d17b-0795-411d-aaf9-cee96308dec4"
-
-const PROJECT_WALLET =
-"rPsHdHqirg5UHfukqUtsTgFsPJqrn2GUjc"
-
-const PROJECT_SEED =
-"sEdTM4enyVEC69C6pGrU9diRyjkoceP"
-const MONGO_URI =
-"mongodb+srv://admin:admin123@cluster0.wm6mfrb.mongodb.net/xdog?retryWrites=true&w=majority"
-const ADMIN_WALLET =
-"ra5YfjZMr3WtjGFJrDBQoxAtw3J1dBCMdj"
-
 const axios = require("axios")
 const xrpl = require("xrpl")
 const bodyParser = require("body-parser")
@@ -44,6 +26,34 @@ secret:"xdog-secret",
 resave:false,
 saveUninitialized:true
 }))
+
+/*
+==================================
+CONFIG
+==================================
+*/
+
+const API_KEY =
+"a2f246fc-0098-454b-a5c7-282df3df9127"
+
+
+const API_SECRET =
+"3a33d17b-0795-411d-aaf9-cee96308dec4"
+
+
+const PROJECT_WALLET =
+"ra5YfjZMr3WtjGFJrDBQoxAtw3J1dBCMdj"
+
+
+const PROJECT_SEED =
+"sEdTM4enyVEC69C6pGrU9diRyjkoceP"
+
+
+const MONGO_URI =
+"mongodb+srv://admin:admin123@cluster0.wm6mfrb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+
+const ADMIN_WALLET =
+"ra5YfjZMr3WtjGFJrDBQoxAtw3J1dBCMdj"
 
 /*
 ==================================
@@ -102,7 +112,7 @@ XRPL CLIENT
 
 const client =
 new xrpl.Client(
-"wss://xrplcluster.com"
+"wss://s1.ripple.com"
 )
 
 async function connectXRPL(){
@@ -144,30 +154,19 @@ PROJECT_SEED
 const inscriptionData =
 JSON.stringify({
 
-  protocol:"xrdog",
+protocol:"xrdog",
 
-  op:"mint",
+op:"mint",
 
-  tick:"XDOG",
+tick:ticker,
 
-  name:"XDOG",
+amount:mintAmount,
 
-  description:"Launchpad Inscription Token XRPL",
+supply:supply,
 
-  creator: wallet.address,
-
-  supply:21000000,
-
-  amount:1000,
-
-  mintPrice:0.5,
-
-  mintLimit:"unlimited"
+minted:minted + mintAmount
 
 })
-
-console.log("DESTINATION =", destinationWallet)
-console.log("PROJECT =", wallet.address)
 
 const tx = {
 
@@ -220,18 +219,7 @@ signed.tx_blob
 )
 
 minted += mintAmount
-await connectDB()
 
-await db.collection("deploys").updateOne(
-{
-  ticker:ticker
-},
-{
-  $inc:{
-    minted:mintAmount
-  }
-}
-)
 console.log(
 "INSCRIPTION SENT"
 )
@@ -311,27 +299,44 @@ color:white;
 max-width:500px;
 margin:auto;
 background:#0f172a;
-padding:25px;
+padding:20px;
 border-radius:20px;
 }
 
-button{
-width:100%;
-padding:18px;
-border:none;
-border-radius:12px;
-background:#00ff99;
-font-size:18px;
-font-weight:bold;
-cursor:pointer;
+.logo{
+text-align:center;
+}
+
+.logo img{
+width:120px;
+border-radius:50%;
+}
+
+.card{
+background:#111827;
+padding:20px;
+border-radius:15px;
 margin-top:15px;
 }
 
-.box{
-background:#111827;
+.btn{
+display:block;
+width:100%;
 padding:15px;
+margin-top:15px;
+background:#00ff99;
+color:black;
+font-weight:bold;
+border:none;
 border-radius:12px;
-margin-bottom:15px;
+font-size:18px;
+}
+
+.stat{
+font-size:40px;
+font-weight:bold;
+color:#00ff99;
+text-align:center;
 }
 
 </style>
@@ -342,57 +347,92 @@ margin-bottom:15px;
 
 <div class="container">
 
-<h1>
-XDOG
-</h1>
+<div class="logo">
 
-<p>
-FIRST XRPL INSCRIPTION LAUNCHPAD
-</p>
+<img
+src="https://raw.githubusercontent.com/Agungeth/XDOG-/main/logo.png"
+style="
+width:120px;
+height:120px;
+border-radius:50%;
+margin-bottom:20px;
+"
+/>
 
-<div class="box">
-Minted:
+
+<h1>XDOG</h1>
+<p>FIRST XRPL MEME INSCRIPTION</p>
+</div>
+
+<div class="card">
+
+<div class="stat">
 ${minted}
 </div>
 
-<div class="box">
-Remaining:
+<p align="center">
+MINTED
+</p>
+
+<hr>
+
+<div class="stat">
 ${remaining}
 </div>
 
-<div class="box">
-Floor:
-${floor} XRP
+<p align="center">
+REMAINING
+</p>
+
 </div>
 
-<div class="box">
-Progress:
-${progress}%
+<div class="card">
+
+<h2>PRICE PER MINT</h2>
+
+<div class="stat">
+0.5 XRP
 </div>
 
-<a href="/mint">
-<button>
+<button
+class="btn"
+onclick="window.location='/mint'">
 MINT XDOG
 </button>
-</a>
 
-<a href="/market">
-<button>
-MARKETPLACE
-</button>
-</a>
+</div>
 
-<a href="/deploy">
-<button>
-DEPLOY TOKEN
-</button>
-</a>
+<div class="card">
 
-<a href="/publicmint">
-<button>
+<h2>DETAILS</h2>
+
+<p>Mint Status : LIVE</p>
+
+<p>Supply : 21,000,000</p>
+
+<p>Per Mint : 1000 XDOG</p>
+
+<p>Wallet : Xaman</p>
+
+</div>
+
+<button
+class="btn"
+onclick="window.location='/public'">
 PUBLIC MINT
 </button>
-</a
+
+<button
+class="btn"
+onclick="window.location='/marketplace'">
+MARKETPLACE
+</button>
+
+<button
+class="btn"
+onclick="window.location='/launchpad'">
+LAUNCHPAD
+</button>
 
 </div>
 
@@ -472,124 +512,106 @@ res.send("MINT ERROR")
 })
 
 /*
-==================================
-MARKETPLACE
-==================================
+====================================
+PUBLIC PAGE
+====================================
 */
 
-app.get("/market", async (req,res)=>{
+app.get("/public", async (req,res)=>{
 
-await connectDB()
+res.redirect("/mint")
 
-const listings =
-await db.collection("listings")
-.find()
-.toArray()
+})
 
-const html =
-listings.map(x=>`
+/*
+====================================
+LAUNCHPAD PAGE
+====================================
+*/
 
-<div style="
-background:#111827;
-padding:20px;
-border-radius:20px;
-margin-bottom:20px;
-">
 
-<h2>
-${x.inscription}
-</h2>
-
-<p>
-${x.price} XRP
-</p>
-
-<p>
-Amount: ${x.amount}
-</p>
-
-<form
-action="/buy/${x._id}"
-method="POST"
->
-<input
-name="buyAmount"
-placeholder="Amount to buy"
-required
->
-
-<br><br>
-
-<button>
-BUY NOW
-</button>
-
-</form>
-
-</div>
-
-`).join("")
+app.get("/launchpad", async (req,res)=>{
 
 res.send(`
 
 <html>
 
-<body style="
-background:#020617;
+<head>
+
+<title>XDOG Launchpad</title>
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+background:#050816;
 font-family:Arial;
 color:white;
 padding:20px;
-">
+}
 
-<h1>
-XDOG MARKETPLACE
-</h1>
+.card{
+background:#0f172a;
+padding:20px;
+border-radius:20px;
+max-width:500px;
+margin:auto;
+}
 
-<form
-action="/list"
-method="POST"
->
+input{
+width:100%;
+padding:15px;
+margin-top:10px;
+margin-bottom:15px;
+border:none;
+border-radius:10px;
+background:#111827;
+color:white;
+}
 
-<input
-name="seller"
-placeholder="Seller Wallet"
-required
->
+button{
+width:100%;
+padding:15px;
+background:#00ff99;
+border:none;
+border-radius:12px;
+font-weight:bold;
+font-size:18px;
+}
 
-<br><br>
+h1{
+color:#00ff99;
+}
 
-<input
-name="inscription"
+</style>
 
-placeholder="Inscription"
-required
->
+</head>
 
-<br><br>
+<body>
 
-<input
-name="amount"
-placeholder="Amount"
-/>
+<div class="card">
 
-<br><br>
+<h1>XDOG LAUNCHPAD</h1>
 
-<input
-name="price"
-placeholder="Price XRP"
-/>
+<p>Create XRPL Meme Token</p>
 
-<br><br>
+<input placeholder="Token Name">
 
-<button>
-CREATE LISTING
+<input placeholder="Ticker">
+
+<input placeholder="Supply">
+
+<input placeholder="Mint Price XRP">
+
+<button onclick="window.location='/mint'">
+
+CREATE TOKEN
+
 </button>
 
-</form>
-
-<br><hr><br>
-
-${html}
+</div>
 
 </body>
 
@@ -599,28 +621,113 @@ ${html}
 
 })
 
+
+/*
+==================================
+MARKETPLACE
+==================================
+*/
+
+app.get("/marketplace", async (req,res)=>{
+
+res.send(`
+<html>
+
+<body style="
+background:#020617;
+color:white;
+font-family:sans-serif;
+padding:30px;
+">
+
+<h1 style="
+font-size:40px;
+margin-bottom:30px;
+">
+XDOG MARKETPLACE
+</h1>
+
+<input
+placeholder="Seller Wallet"
+style="
+width:100%;
+padding:15px;
+margin-bottom:15px;
+background:#111827;
+border:1px solid #333;
+border-radius:12px;
+color:white;
+font-size:18px;
+outline:none;
+"
+/>
+
+<input
+placeholder="Inscription"
+style="
+width:100%;
+padding:15px;
+margin-bottom:15px;
+background:#111827;
+border:1px solid #333;
+border-radius:12px;
+color:white;
+font-size:18px;
+outline:none;
+"
+/>
+
+<input
+placeholder="Price XRP"
+style="
+width:100%;
+padding:15px;
+margin-bottom:20px;
+background:#111827;
+border:1px solid #333;
+border-radius:12px;
+color:white;
+font-size:18px;
+outline:none;
+"
+/>
+
+<button style="
+width:100%;
+padding:15px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:12px;
+font-size:18px;
+font-weight:bold;
+">
+CREATE LISTING
+</button>
+
+</body>
+</html>
+`)
+
+})
+
 /*
 ==================================
 CREATE LISTING
 ==================================
 */
-
 app.post("/list", async (req,res)=>{
 
 await connectDB()
 
-await db.collection("listings")
-.insertOne({
-
-...req.body,
-
-status:"active",
-
+await db.collection("listings").insertOne({
+seller:req.body.seller,
+inscription:req.body.inscription,
+price:req.body.price,
 created:Date.now()
-
 })
 
-res.redirect("/market")
+res.redirect("/marketplace")
 
 })
 
@@ -633,12 +740,6 @@ BUY LISTING
 app.post("/buy/:id", async (req,res)=>{
 
 await connectDB()
-
-const buyAmount =
-parseInt(req.body.buyAmount)
-
-console.log("BUY AMOUNT =", buyAmount)
-console.log("BODY =", req.body)
 
 const listing =
 await db.collection("listings")
@@ -658,27 +759,14 @@ return res.send(
 
 }
 
-if(buyAmount > parseInt(listing.amount)){
-
-return res.send(
-"AMOUNT EXCEEDS AVAILABLE TOKENS"
-)
-
-}
-
-const totalXrp =
-buyAmount * parseFloat(listing.price)
-
 const fee =
 (parseFloat(listing.price)
 * MARKETPLACE_FEE) / 100
 
-const orderId = "ORD-" + Date.now()
-
 await db.collection("escrow")
 .insertOne({
 
-orderId:orderId,
+listingId:req.params.id,
 
 buyer:"pending",
 
@@ -686,49 +774,17 @@ seller:listing.seller,
 
 price:listing.price,
 
-amount:buyAmount,
-
 fee:fee,
 
-status:"waiting_payment",
+status:"pending_release",
 
 created:Date.now()
+
 })
 
-await db.collection("listings")
-.updateOne(
-{
-  _id:new ObjectId(req.params.id)
-},
-{
-  $set:{
-    amount:
-      parseInt(listing.amount) - buyAmount
-  }
-}
+res.send(
+"PAYMENT PENDING ADMIN RELEASE"
 )
-
-res.send(`
-<h1>ORDER CREATED</h1>
-
-<p>Order ID: ${orderId}</p>
-
-<p>Token: ${listing.inscription}</p>
-
-<p>Amount: ${buyAmount}</p>
-
-<p>Total XRP: ${totalXrp}</p>
-
-<p>
-Send XRP to:
-rPsHdHqirg5UHfukqUtsTgFsPJqrn2GUjc
-</p>
-
-<p>
-Status:
-WAITING PAYMENT
-</p>
-`)
 
 })
 
@@ -737,98 +793,6 @@ WAITING PAYMENT
 ADMIN PANEL
 ==================================
 */
-
-app.get("/order/:orderId", async (req,res)=>{
-
-await connectDB()
-
-const order =
-await db.collection("escrow")
-.findOne({
-orderId:req.params.orderId
-})
-
-if(!order){
-return res.send("ORDER NOT FOUND")
-}
-
-res.send(`
-<h1>ORDER STATUS</h1>
-
-<p>Order ID: ${order.orderId}</p>
-
-<p>Status: ${order.status}</p>
-
-<p>Seller: ${order.seller}</p>
-
-<p>Amount: ${order.amount}</p>
-
-<p>Price: ${order.price}</p>
-
-`)
-})
-
-app.get("/debug-escrow", async (req,res)=>{
-
-await connectDB()
-
-const data =
-await db.collection("escrow")
-.find()
-.toArray()
-
-res.send(
-"<pre>" +
-JSON.stringify(data,null,2) +
-"</pre>"
-)
-
-})
-
-app.get("/debug-listings", async(req,res)=>{
-
-  await connectDB()
-
-  const data =
-  await db.collection("listings")
-  .find()
-  .toArray()
-
-  res.send(
-    "<pre>" +
-    JSON.stringify(data,null,2) +
-    "</pre>"
-  )
-
-})
-
-app.get("/clear-escrow", async(req,res)=>{
-
-await connectDB()
-
-await db.collection("escrow").deleteMany({})
-
-res.send("ESCROW CLEARED")
-
-})
-
-app.get("/orders", async(req,res)=>{
-
-  await connectDB()
-
-  const orders =
-  await db.collection("escrow")
-  .find()
-  .sort({created:-1})
-  .toArray()
-
-  res.send(
-    "<pre>" +
-    JSON.stringify(orders,null,2) +
-    "</pre>"
-  )
-
-})
 
 app.get("/admin", async (req,res)=>{
 
@@ -968,16 +932,16 @@ method="POST"
 >
 
 <input
-name="ticker"
-placeholder="Ticker"
+name="supply"
+placeholder="Supply"
 required
 >
 
 <br><br>
 
 <input
-name="supply"
-placeholder="Supply"
+name="price"
+placeholder="Mint Price XRP"
 required
 >
 
@@ -995,8 +959,6 @@ required
 DEPLOY
 </button>
 
-</form>
-
 </body>
 
 </html>
@@ -1007,98 +969,30 @@ DEPLOY
 
 app.post("/deploy", async (req,res)=>{
 
-const payload = await axios.post(
+await connectDB()
 
-"https://xumm.app/api/v1/platform/payload",
+await db.collection("deploys")
 
-{
+.insertOne({
 
-txjson:{
+ticker:req.body.ticker.toUpperCase(),
 
-TransactionType:"Payment",
+supply:req.body.supply,
 
-Destination:PROJECT_WALLET,
+price:req.body.price,
 
-Amount:String(5 * 1000000)
+mint:req.body.mint,
 
-},
+owner:"",
 
-custom_meta:{
-
-identifier:"DEPLOY",
-
-blob:req.body
-
-}
-
-},
-
-{
-
-headers:{
-
-"X-API-Key": "a2f246fc-0098-454b-a5c7-282df3df9127",
-"X-API-Secret": "3a33d17b-0795-411d-aaf9-cee96308dec4"
-
-}
-
-}
-
-)
-
-res.redirect(payload.data.next.always)
+created:Date.now()
 
 })
 
-app.get("/publicmint", async (req,res)=>{
+res.redirect(
+`/collection/${req.body.ticker.toUpperCase()}`
+)
 
-await connectDB()
-
-const tokens =
-await db.collection("deploys")
-.find({})
-.toArray()
-console.log("TOKENS =", tokens)
-const html =
-tokens.map(token => `
-<div style="
-background:#0a1430;
-padding:20px;
-margin:10px;
-border-radius:10px;
-">
-<h2>${token.ticker}</h2>
-
-<p>
-Mint Amount:
-${token.mint}
-</p>
-
-<a href="/collection/${token.ticker}">
-<button>
-OPEN COLLECTION
-</button>
-</a>
-
-</div>
-`).join("")
-
-res.send(`
-<html>
-<body style="
-background:#020617;
-color:white;
-font-family:Arial;
-padding:20px;
-">
-
-<h1>PUBLIC MINT</h1>
-
-${html}
-
-</body>
-</html>
-`)
 })
 
 /*
@@ -1285,7 +1179,6 @@ data.payloadResponse.signed
 
 const userWallet =
 data.payloadResponse.account
-console.log("USER WALLET =", userWallet)
 
 const ticker =
 data.custom_meta.identifier
@@ -1297,6 +1190,16 @@ await db.collection("deploys")
 .findOne({
 ticker
 })
+
+await db.collection("deploys")
+.updateOne(
+ { ticker },
+ {
+  $set:{
+   owner:userWallet
+  }
+ }
+)
 
 if(token){
 
@@ -1343,6 +1246,60 @@ res.send("WEBHOOK ERROR")
 })
 
 /*
+====================================
+AUTO MARKETPLACE
+====================================
+*/
+
+app.post("/list/:ticker", async (req,res)=>{
+
+ await connectDB()
+
+ const token =
+ await db.collection("deploys")
+ .findOne({
+  ticker:req.params.ticker.toUpperCase()
+ })
+
+ if(!token){
+  return res.send("TOKEN NOT FOUND")
+ }
+
+ await db.collection("listings")
+ .insertOne({
+
+  ticker:token.ticker,
+
+  owner:token.owner,
+
+  supply:token.supply,
+
+  mint:token.mint,
+
+  price:req.body.price || "10",
+
+  created:Date.now()
+
+ })
+
+ res.send("LISTED")
+
+})
+
+app.get("/marketplace", async (req,res)=>{
+
+ await connectDB()
+
+ const listings =
+ await db.collection("listings")
+ .find({})
+ .toArray()
+
+ res.json(listings)
+
+})
+
+/*
 ==================================
 START SERVER
 ==================================
@@ -1364,12 +1321,3 @@ console.log(
 
 })
 
-app.get("/clear", async(req,res)=>{
-
-await connectDB()
-
-await db.collection("listings").deleteMany({})
-
-res.send("LISTINGS CLEARED")
-
-})
