@@ -359,9 +359,10 @@ text-align:center;
 
 .box{
 background:#111827;
-padding:15px;
+padding:12px;
 border-radius:12px;
-margin-top:15px;
+margin-top:8px;
+line-height:1.6;
 }
 
 @media(max-width:768px){
@@ -395,8 +396,8 @@ text-align:center;
 <button>MARKETPLACE</button>
 </a>
 
-<a href="/mint">
-<button>MINT XDOG</button>
+<a href="/deploy">
+<button>DEPLOY</button>
 </a>
 
 </div>
@@ -405,7 +406,10 @@ text-align:center;
 
 <div class="logo">
 
-<img src="/logo.png">
+<img
+src="https://raw.githubusercontent.com/Agungeth/XDOG-/24f1b223aa966ff69447cd11156c1c66663e9e8c/file_00000000ade472088878b581a59c79bc.png"
+width="150"
+style="display:block;margin:auto;margin-bottom:15px;">
 
 <h1>XDOG</h1>
 
@@ -442,15 +446,9 @@ text-align:center;
 </div>
 
 <div class="box">
-Mint Status : LIVE
-</div>
-
-<div class="box">
-Supply : 21,000,000
-</div>
-
-<div class="box">
-Progress : ${progress}%
+Mint Status: LIVE<br>
+Supply: 21,000,000<br>
+Per Mint: 1000
 </div>
 
 </div>
@@ -1037,6 +1035,14 @@ method="POST"
 >
 
 <input
+name="name"
+placeholder="Token Name"
+required
+>
+
+<br><br>
+
+<input
 name="ticker"
 placeholder="Ticker"
 required
@@ -1053,8 +1059,16 @@ required
 <br><br>
 
 <input
+name="price"
+placeholder="Mint Price (XRP)"
+required
+>
+
+<br><br>
+
+<input
 name="mint"
-placeholder="Mint Amount"
+placeholder="Amount Per Mint"
 required
 >
 
