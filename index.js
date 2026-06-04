@@ -102,7 +102,7 @@ XRPL CLIENT
 
 const client =
 new xrpl.Client(
-"wss://xrplcluster.com"
+"wss://s1.ripple.com"
 )
 
 async function connectXRPL(){
@@ -1424,6 +1424,7 @@ app.listen(PORT,
 async ()=>{
 
 await connectXRPL()
+
 
 await connectDB()
 
