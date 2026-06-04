@@ -53,7 +53,7 @@ FEES
 
 const DEPLOY_FEE = 5
 const MARKETPLACE_FEE = 5
-const MINT_FEE = 0.1
+const MINT_FEE = 1
 
 /*
 ==================================
@@ -283,7 +283,8 @@ res.send(`
 
 <title>XDOG</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <style>
 
@@ -291,86 +292,35 @@ body{
 margin:0;
 padding:20px;
 background:#050816;
-font-family:Arial,sans-serif;
+font-family:Arial;
 color:white;
 }
 
 .container{
-max-width:1000px;
+max-width:500px;
 margin:auto;
 background:#0f172a;
 padding:25px;
 border-radius:20px;
 }
 
-.nav{
-display:flex;
-justify-content:center;
-gap:10px;
-flex-wrap:wrap;
-margin-bottom:25px;
-}
-
-.nav a{
-text-decoration:none;
-}
-
-.nav button{
-width:auto;
-padding:10px 15px;
-margin:0;
-}
-
 button{
+width:100%;
 padding:18px;
 border:none;
 border-radius:12px;
 background:#00ff99;
-font-size:16px;
+font-size:18px;
 font-weight:bold;
 cursor:pointer;
-}
-
-.main{
-display:flex;
-justify-content:space-between;
-align-items:center;
-flex-wrap:wrap;
-gap:20px;
-}
-
-.logo{
-text-align:center;
-}
-
-.logo img{
-width:100px;
-height:100px;
-object-fit:contain;
-}
-
-.stats{
-text-align:center;
-}
-
-.price{
-text-align:center;
+margin-top:15px;
 }
 
 .box{
 background:#111827;
 padding:15px;
 border-radius:12px;
-margin-top:15px;
-}
-
-@media(max-width:768px){
-
-.main{
-flex-direction:column;
-text-align:center;
-}
-
+margin-bottom:15px;
 }
 
 </style>
@@ -381,77 +331,57 @@ text-align:center;
 
 <div class="container">
 
-<div class="nav">
+<h1>
+XDOG
+</h1>
 
-<a href="/">
-<button>HOME</button>
-</a>
+<p>
+FIRST XRPL INSCRIPTION LAUNCHPAD
+</p>
 
-<a href="/publicmint">
-<button>LAUNCHPAD</button>
+<div class="box">
+Minted:
+${minted}
+</div>
+
+<div class="box">
+Remaining:
+${remaining}
+</div>
+
+<div class="box">
+Floor:
+${floor} XRP
+</div>
+
+<div class="box">
+Progress:
+${progress}%
+</div>
+
+<a href="/mint">
+<button>
+MINT XDOG
+</button>
 </a>
 
 <a href="/market">
-<button>MARKETPLACE</button>
+<button>
+MARKETPLACE
+</button>
 </a>
 
-<a href="/mint">
-<button>MINT XDOG</button>
+<a href="/deploy">
+<button>
+DEPLOY TOKEN
+</button>
 </a>
 
-</div>
-
-<div class="main">
-
-<div class="logo">
-
-<img src="/logo.png">
-
-<h1>XDOG</h1>
-
-<p>FIRST XRPL MEME INSCRIPTION</p>
-
-</div>
-
-<div class="stats">
-
-<h1>${minted}</h1>
-<p>MINTED</p>
-
-<hr>
-
-<h2>${remaining}</h2>
-<p>REMAINING</p>
-
-</div>
-
-<div class="price">
-
-<h2>MINT PRICE</h2>
-
-<h1 style="color:#00ff99;">
-0.5 XRP
-</h1>
-
-<a href="/mint">
-<button>MINT XDOG</button>
-</a>
-
-</div>
-
-</div>
-
-<div class="box">
-Mint Status : LIVE
-</div>
-
-<div class="box">
-Supply : 21,000,000
-</div>
-
-<div class="box">
-Progress : ${progress}%
-</div>
+<a href="/publicmint">
+<button>
+PUBLIC MINT
+</button>
+</a
 
 </div>
 
